@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Trade | Minimalist Exchange</title>
+    <title>DIGITAL.TRADE | Institutional Asset Exchange</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
-        /* Base Reset & Variables based on Nine to Five palette */
+        /* Base Variables - Light Terminal Theme */
         :root {
-            --bg-color: #000000;
-            --text-color: #FEFEFE;
-            --accent-gray: #333333;
+            --bg-color: #F4F4F5; /* Very light gray */
+            --bg-secondary: #FFFFFF;
+            --text-main: #09090B;
+            --text-muted: #71717A;
+            --border-color: #D4D4D8;
+            --accent: #2563EB; /* Tech blue for subtle highlights */
+            --positive: #16A34A;
+            --negative: #DC2626;
         }
 
         * {
@@ -28,212 +33,282 @@
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            font-family: 'Space Mono', monospace;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); border-left: 1px solid var(--border-color); }
+        ::-webkit-scrollbar-thumb { background: var(--text-main); }
+
+        /* Typography & Utilities */
+        h1, h2, h3 { font-weight: 700; text-transform: uppercase; letter-spacing: -1px; }
+        p { font-weight: 400; font-size: 0.95rem; color: var(--text-muted); }
+        a { color: var(--text-main); text-decoration: none; transition: color 0.3s; }
+        a:hover { color: var(--accent); }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            border-bottom: 1px solid var(--border-color);
         }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-color);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--text-color);
-        }
+
+        .border-right { border-right: 1px solid var(--border-color); }
+        .border-left { border-left: 1px solid var(--border-color); }
+        .border-bottom { border-bottom: 1px solid var(--border-color); }
 
         /* Navigation */
         nav {
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 2rem 4rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background-color: rgba(244, 244, 245, 0.9);
+            backdrop-filter: blur(10px);
             z-index: 100;
-            mix-blend-mode: difference;
+            border-bottom: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 2fr 6fr 2fr;
+            align-items: center;
         }
 
         .logo {
-            font-weight: 900;
+            padding: 1.5rem 2rem;
             font-size: 1.2rem;
-            letter-spacing: -1px;
-            text-transform: uppercase;
-            cursor: pointer;
+            font-weight: 700;
+            border-right: 1px solid var(--border-color);
         }
 
-        .menu-links a {
-            color: var(--text-color);
-            text-decoration: none;
-            margin-left: 3rem;
-            font-size: 0.9rem;
-            font-weight: 400;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-        }
-
-        .menu-links a::after {
-            content: '';
-            position: absolute;
-            width: 0%;
-            height: 1px;
-            bottom: -4px;
-            left: 0;
-            background-color: var(--text-color);
-            transition: width 0.3s ease;
-        }
-
-        .menu-links a:hover::after {
-            width: 100%;
-        }
-
-        /* Sections */
-        section {
-            padding: 8rem 4rem;
-            min-height: 100vh;
+        .nav-links {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            padding: 0 2rem;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .nav-action {
+            padding: 1.5rem 2rem;
+            border-left: 1px solid var(--border-color);
+            text-align: center;
+            background: var(--text-main);
+            color: var(--bg-color);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .nav-action:hover { background: var(--accent); color: white; }
+
+        /* Market Ticker */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem 0;
+            margin-top: 65px; /* offset for fixed nav */
+            display: flex;
+            white-space: nowrap;
+        }
+
+        .ticker {
+            display: inline-block;
+            animation: ticker 30s linear infinite;
+            font-size: 0.85rem;
+        }
+
+        .ticker-item {
+            display: inline-block;
+            padding: 0 2rem;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .ticker-item span.up { color: var(--positive); }
+        .ticker-item span.down { color: var(--negative); }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
 
         /* Hero Section */
         .hero {
-            position: relative;
-            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 85vh;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-text {
+            padding: 4rem;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid var(--border-color);
         }
 
-        .hero-title {
-            font-size: clamp(4rem, 10vw, 12rem);
-            font-weight: 900;
-            line-height: 0.9;
-            letter-spacing: -4px;
-            text-transform: uppercase;
+        .hero-badge {
+            display: inline-block;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            border-radius: 50px;
+            margin-bottom: 2rem;
+            width: max-content;
         }
 
-        .hero-subtitle {
-            margin-top: 2rem;
-            font-size: 1.5rem;
-            font-weight: 300;
-            max-width: 600px;
-            opacity: 0.8;
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 3rem;
-            left: 4rem;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .scroll-line {
-            width: 50px;
-            height: 1px;
-            background-color: var(--text-color);
-        }
-
-        /* Features Section */
-        .features {
-            border-top: 1px solid var(--accent-gray);
-        }
-
-        .feature-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 4rem 0;
-            border-bottom: 1px solid var(--accent-gray);
-        }
-
-        .feature-number {
-            font-size: 2rem;
-            font-weight: 300;
-            color: var(--accent-gray);
-        }
-
-        .feature-content {
-            width: 60%;
-        }
-
-        .feature-title {
-            font-size: 4rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            letter-spacing: -2px;
-            text-transform: uppercase;
-        }
-
-        .feature-desc {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            color: #aaaaaa;
-            font-weight: 300;
-        }
-
-        /* CTA Section */
-        .cta {
-            text-align: center;
-            align-items: center;
-            background-color: var(--text-color);
-            color: var(--bg-color);
-        }
-
-        .cta h2 {
-            font-size: clamp(3rem, 8vw, 8rem);
-            font-weight: 900;
-            letter-spacing: -3px;
-            text-transform: uppercase;
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 1.1;
             margin-bottom: 2rem;
         }
 
-        .btn {
-            display: inline-block;
-            padding: 1.5rem 4rem;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            text-decoration: none;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border-radius: 50px;
-            text-transform: uppercase;
-            transition: transform 0.3s ease, background-color 0.3s ease;
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 450px;
+            margin-bottom: 3rem;
         }
 
-        .btn:hover {
+        .hero-img-container {
+            position: relative;
+            overflow: hidden;
+            background: #e0e0e0;
+        }
+
+        .hero-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.2);
+            transition: filter 0.5s ease, transform 5s ease;
+        }
+
+        .hero-img-container:hover img {
+            filter: grayscale(0%) contrast(1);
             transform: scale(1.05);
-            background-color: #222;
         }
 
-        /* Footer */
+        /* Stats Strip */
+        .stats-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            background: var(--bg-secondary);
+        }
+
+        .stat-box {
+            padding: 2.5rem 2rem;
+            border-right: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .stat-box:last-child { border-right: none; }
+        .stat-number { font-size: 2.5rem; font-weight: 700; color: var(--text-main); }
+        .stat-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-top: 0.5rem; }
+
+        /* Infrastructure Section */
+        .infrastructure { padding: 6rem 4rem; }
+        .section-header { margin-bottom: 4rem; max-width: 600px; }
+        .section-header h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-color: var(--text-main);
+        }
+
+        .feature-img {
+            height: 200px;
+            border-bottom: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .feature-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(80%);
+            transition: filter 0.3s;
+        }
+
+        .feature-card:hover .feature-img img { filter: grayscale(0%); }
+
+        .feature-content { padding: 2rem; }
+        .feature-content h3 { font-size: 1.2rem; margin-bottom: 1rem; }
+        .feature-content p { font-size: 0.85rem; }
+
+        /* Advanced Footer */
         footer {
-            padding: 3rem 4rem;
+            background-color: var(--text-main);
+            color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 2fr;
+        }
+
+        .footer-col {
+            padding: 4rem 3rem;
+            border-right: 1px solid #333;
+        }
+
+        .footer-col:last-child { border-right: none; }
+        .footer-title { color: #888; margin-bottom: 2rem; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+        
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 1rem; }
+        .footer-links a { color: var(--bg-color); opacity: 0.8; }
+        .footer-links a:hover { opacity: 1; color: var(--accent); }
+
+        .terminal-readout {
+            background: #111;
+            padding: 1.5rem;
+            border: 1px solid #333;
+            font-size: 0.75rem;
+            color: #0F0; /* Terminal Green */
+            margin-top: 1rem;
+        }
+
+        .footer-bottom {
+            padding: 1.5rem 3rem;
+            border-top: 1px solid #333;
             display: flex;
             justify-content: space-between;
-            border-top: 1px solid var(--accent-gray);
-            font-size: 0.9rem;
             color: #888;
+            font-size: 0.75rem;
         }
 
         /* Mobile Adjustments */
-        @media (max-width: 768px) {
-            nav { padding: 1.5rem 2rem; }
-            .menu-links { display: none; }
-            section { padding: 6rem 2rem; }
-            .hero-title { letter-spacing: -2px; }
-            .feature-item { flex-direction: column; gap: 1rem; }
-            .feature-content { width: 100%; }
-            .feature-title { font-size: 2.5rem; }
+        @media (max-width: 1024px) {
+            .hero, .stats-strip { grid-template-columns: 1fr; }
+            .hero-img-container { min-height: 40vh; }
+            .hero-text { border-right: none; border-bottom: 1px solid var(--border-color); padding: 3rem 2rem; }
+            .stat-box { border-right: none; border-bottom: 1px solid var(--border-color); }
+            .features-grid { grid-template-columns: 1fr; }
+            nav { grid-template-columns: 1fr 1fr; }
+            .nav-links { display: none; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-col { border-right: none; border-bottom: 1px solid #333; padding: 2rem; }
         }
     </style>
 </head>
@@ -241,98 +316,200 @@
 
     <nav>
         <div class="logo">DIGITAL.TRADE</div>
-        <div class="menu-links">
+        <div class="nav-links">
             <a href="#markets">Markets</a>
-            <a href="#platform">Platform</a>
-            <a href="#contact">Contact</a>
+            <a href="#infrastructure">Infrastructure</a>
+            <a href="#api">Developer API</a>
+            <a href="#company">Company</a>
         </div>
+        <div class="nav-action">LAUNCH TRADING</div>
     </nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">Trade<br>The Future.</h1>
-            <p class="hero-subtitle">A seamless, institutional-grade architecture for digital assets. Execute trades with absolute precision and zero friction.</p>
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item">BTC/USD $64,230.50 <span class="up">▲ +2.4%</span></div>
+            <div class="ticker-item">ETH/USD $3,450.12 <span class="down">▼ -0.8%</span></div>
+            <div class="ticker-item">SOL/USD $145.20 <span class="up">▲ +5.1%</span></div>
+            <div class="ticker-item">XRP/USD $0.58 <span class="up">▲ +1.2%</span></div>
+            <div class="ticker-item">LINK/USD $18.90 <span class="down">▼ -2.1%</span></div>
+            <div class="ticker-item">DOGE/USD $0.12 <span class="up">▲ +8.4%</span></div>
+            
+            <div class="ticker-item">BTC/USD $64,230.50 <span class="up">▲ +2.4%</span></div>
+            <div class="ticker-item">ETH/USD $3,450.12 <span class="down">▼ -0.8%</span></div>
+            <div class="ticker-item">SOL/USD $145.20 <span class="up">▲ +5.1%</span></div>
+            <div class="ticker-item">XRP/USD $0.58 <span class="up">▲ +1.2%</span></div>
+            <div class="ticker-item">LINK/USD $18.90 <span class="down">▼ -2.1%</span></div>
+            <div class="ticker-item">DOGE/USD $0.12 <span class="up">▲ +8.4%</span></div>
         </div>
-        <div class="scroll-indicator">
-            Scroll to explore <div class="scroll-line"></div>
+    </div>
+
+    <header class="hero">
+        <div class="hero-text gs-reveal">
+            <div class="hero-badge">System Status: Fully Operational</div>
+            <h1>Engineered for High-Frequency Liquidity.</h1>
+            <p>Access global markets through a unified, institutional-grade architecture. Execute trades with sub-millisecond latency and cryptographic security.</p>
+            <a href="#" style="text-decoration: underline; font-weight: 700;">Read the Documentation &rarr;</a>
+        </div>
+        <div class="hero-img-container gs-reveal-img">
+            <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=2070&auto=format&fit=crop" alt="Trading Terminal">
+        </div>
+    </header>
+
+    <section class="stats-strip border-bottom">
+        <div class="stat-box gs-reveal">
+            <div class="stat-number">$42B+</div>
+            <div class="stat-label">30-Day Volume</div>
+        </div>
+        <div class="stat-box gs-reveal">
+            <div class="stat-number">&lt;12ms</div>
+            <div class="stat-label">Execution Latency</div>
+        </div>
+        <div class="stat-box gs-reveal">
+            <div class="stat-number">99.99%</div>
+            <div class="stat-label">Uptime SLA</div>
+        </div>
+        <div class="stat-box gs-reveal">
+            <div class="stat-number">250+</div>
+            <div class="stat-label">Markets Supported</div>
         </div>
     </section>
 
-    <section id="platform" class="features">
-        <div class="feature-item gs-reveal">
-            <div class="feature-number">01</div>
-            <div class="feature-content">
-                <h2 class="feature-title">Liquidity</h2>
-                <p class="feature-desc">Access deep liquidity pools across global markets. Our routing engine ensures your digital trades execute at the most optimal pricing available.</p>
-            </div>
+    <section id="infrastructure" class="infrastructure">
+        <div class="section-header gs-reveal">
+            <h2>Core Infrastructure</h2>
+            <p>Built from the ground up to support the demands of algorithmic traders, quantitative funds, and market makers.</p>
         </div>
-        <div class="feature-item gs-reveal">
-            <div class="feature-number">02</div>
-            <div class="feature-content">
-                <h2 class="feature-title">Security</h2>
-                <p class="feature-desc">Built on uncompromising cryptographic standards. Cold storage architectures and multi-sig authentication protect your digital capital 24/7.</p>
-            </div>
-        </div>
-        <div class="feature-item gs-reveal">
-            <div class="feature-number">03</div>
-            <div class="feature-content">
-                <h2 class="feature-title">Analytics</h2>
-                <p class="feature-desc">Real-time data visualization with clean, un-cluttered dashboards. See the market clearly without the noise.</p>
-            </div>
-        </div>
-    </section>
 
-    <section id="contact" class="cta">
-        <h2 class="gs-reveal">Ready to<br>Execute.</h2>
-        <div class="gs-reveal">
-            <a href="#" class="btn">Open Account</a>
+        <div class="features-grid">
+            <div class="feature-card gs-reveal">
+                <div class="feature-img">
+                    <img src="https://images.unsplash.com/photo-1642543492481-44e81e391478?q=80&w=800&auto=format&fit=crop" alt="Advanced Charting">
+                </div>
+                <div class="feature-content">
+                    <h3>Deep Liquidity Pools</h3>
+                    <p>Our proprietary Smart Order Routing (SOR) algorithm aggregates liquidity from multiple dark and lit venues to guarantee the best execution price.</p>
+                </div>
+            </div>
+
+            <div class="feature-card gs-reveal">
+                <div class="feature-img">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop" alt="API Code">
+                </div>
+                <div class="feature-content">
+                    <h3>WebSocket API v3.0</h3>
+                    <p>Connect directly to our matching engine via robust REST and WebSocket APIs. Comprehensive SDKs available for Python, Rust, and Node.js.</p>
+                </div>
+            </div>
+
+            <div class="feature-card gs-reveal">
+                <div class="feature-img">
+                    <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=800&auto=format&fit=crop" alt="Security Nodes">
+                </div>
+                <div class="feature-content">
+                    <h3>Institutional Security</h3>
+                    <p>MPC (Multi-Party Computation) cryptography, hardware security modules (HSMs), and 100% cold storage architectures secure user assets.</p>
+                </div>
+            </div>
         </div>
     </section>
 
     <footer>
-        <div>&copy; 2026 DIGITAL.TRADE</div>
-        <div>Minimalist Architecture for Finance.</div>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo" style="padding: 0; border: none; margin-bottom: 1rem;">DIGITAL.TRADE</div>
+                <p style="color: #888; font-size: 0.8rem; max-width: 250px;">The minimalist exchange architecture for professional digital asset traders.</p>
+                
+                <div class="terminal-readout">
+                    > SYSTEM_CHECK: OK<br>
+                    > LATENCY: 11.4ms<br>
+                    > MATCHING_ENGINE: ACTIVE<br>
+                    <span class="cursor" style="animation: blink 1s infinite;">_</span>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <div class="footer-title">Platform</div>
+                <ul class="footer-links">
+                    <li><a href="#">Spot Trading</a></li>
+                    <li><a href="#">Margin & Derivatives</a></li>
+                    <li><a href="#">OTC Desk</a></li>
+                    <li><a href="#">Fee Schedule</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-title">Developers</div>
+                <ul class="footer-links">
+                    <li><a href="#">API Documentation</a></li>
+                    <li><a href="#">GitHub Repository</a></li>
+                    <li><a href="#">Status Dashboard</a></li>
+                    <li><a href="#">Bug Bounty</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-title">Global Network</div>
+                <p style="color: #888; margin-bottom: 1rem;">Operating nodes in New York, London, Tokyo, and Singapore.</p>
+                <div style="width: 100%; height: 100px; border: 1px dotted #333; display: flex; align-items: center; justify-content: center; color: #333;">
+                    [ NODE MAP DATA ]
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; 2026 DIGITAL TRADE LLC. ALL RIGHTS RESERVED.</div>
+            <div>VERSION 4.2.0 | BUILD 9921</div>
+        </div>
     </footer>
 
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // Hero Title Entry Animation
-        gsap.from(".hero-title", {
-            y: 100,
+        // Hero Text Fade In
+        gsap.from(".hero-text", {
+            x: -50,
             opacity: 0,
-            duration: 1.5,
-            ease: "power4.out",
+            duration: 1,
+            ease: "power3.out",
             delay: 0.2
         });
 
-        gsap.from(".hero-subtitle", {
-            y: 50,
+        // Hero Image Slide In
+        gsap.from(".hero-img-container", {
+            x: 50,
             opacity: 0,
-            duration: 1.5,
-            ease: "power4.out",
-            delay: 0.5
+            duration: 1,
+            ease: "power3.out",
+            delay: 0.4
         });
 
-        // Scroll animations for feature items and CTA
+        // Scroll reveals for stats and features
         const revealElements = document.querySelectorAll(".gs-reveal");
-
-        revealElements.forEach((elem) => {
+        revealElements.forEach((elem, index) => {
             gsap.fromTo(elem, 
-                { autoAlpha: 0, y: 50 }, 
+                { autoAlpha: 0, y: 30 }, 
                 {
-                    duration: 1, 
+                    duration: 0.8, 
                     autoAlpha: 1, 
                     y: 0, 
-                    ease: "power3.out",
+                    ease: "power2.out",
                     scrollTrigger: {
                         trigger: elem,
-                        start: "top 85%", // Triggers when the top of the element hits 85% of the viewport height
+                        start: "top 90%", // Trigger when element is 90% down the viewport
                         toggleActions: "play none none reverse"
                     }
                 }
             );
         });
+
+        // Blinking cursor in footer terminal
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes blink {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
