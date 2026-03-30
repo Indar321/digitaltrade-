@@ -13,7 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
-        /* Base Variables - Light Terminal Theme */
+        /* --- Base Variables - Light Terminal Theme --- */
         :root {
             --bg-color: #F4F4F5; 
             --bg-secondary: #FFFFFF;
@@ -22,18 +22,11 @@
             --border-color: #D4D4D8;
             --accent: #2563EB; 
             --whatsapp: #25D366;
+            --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none !important; /* Hide default cursor for desktop */
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+        html { scroll-behavior: smooth; }
 
         body {
             background-color: var(--bg-color);
@@ -44,7 +37,7 @@
             line-height: 1.6;
         }
 
-        /* --- Advanced Custom Cursor (Fixed Visibility) --- */
+        /* --- Advanced Custom Cursor --- */
         #cursor {
             position: fixed;
             top: 0; left: 0;
@@ -54,26 +47,25 @@
             pointer-events: none;
             z-index: 9999;
             transform: translate(-50%, -50%);
-            mix-blend-mode: difference; /* Creates the base inversion */
+            mix-blend-mode: difference;
             transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1), 
                         height 0.3s cubic-bezier(0.19, 1, 0.22, 1),
-                        background-color 0.3s ease,
-                        opacity 0.3s ease;
+                        background-color 0.3s ease, opacity 0.3s ease;
         }
         #cursor.hovered {
-            width: 60px; height: 60px;
-            background-color: var(--accent); /* Overrides white to brand blue */
-            mix-blend-mode: normal; /* Removes the inversion glitch on gray images */
+            width: 70px; height: 70px;
+            background-color: var(--accent);
+            mix-blend-mode: normal;
             opacity: 0.9;
         }
 
-        /* Scrollbar */
+        /* --- Scrollbar --- */
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: var(--bg-color); }
         ::-webkit-scrollbar-thumb { background-color: var(--border-color); }
-        ::-webkit-scrollbar-thumb:hover { background-color: var(--text-muted); }
+        ::-webkit-scrollbar-thumb:hover { background-color: var(--text-main); }
 
-        /* Typography & Utilities */
+        /* --- Typography & Utilities --- */
         h1, h2, h3, h4 { font-weight: 700; text-transform: uppercase; letter-spacing: -1px; }
         p { font-weight: 400; font-size: 0.95rem; color: var(--text-muted); }
         a { color: var(--text-main); text-decoration: none; transition: color 0.3s; }
@@ -83,36 +75,56 @@
         .section-padding { padding: 6rem 4rem; }
         .section-header { margin-bottom: 4rem; max-width: 600px; }
         .section-header h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+
+        /* --- High-End Hover Effects --- */
+        .hover-lift { transition: transform var(--transition-smooth), box-shadow var(--transition-smooth); }
+        .hover-lift:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        
+        .hover-shift-list li { transition: transform 0.3s ease, color 0.3s ease; }
+        .hover-shift-list li:hover { transform: translateX(10px); color: var(--text-main); }
+
+        /* --- Dynamic Buttons --- */
+        .btn-dynamic {
+            position: relative;
+            display: inline-block;
+            padding: 1.5rem 2rem;
+            background: var(--text-main);
+            color: var(--bg-color) !important;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            overflow: hidden;
+            z-index: 1;
+            border: none;
+        }
+        .btn-dynamic::before {
+            content: ''; position: absolute; top: 100%; left: 0; width: 100%; height: 100%;
+            background: var(--accent); z-index: -1; transition: top var(--transition-smooth);
+        }
+        .btn-dynamic:hover::before { top: 0; }
+        .btn-dynamic:hover { color: #FFFFFF !important; }
 
         /* --- SPA Page Logic --- */
         .page { 
-            display: none; 
-            min-height: 100vh; 
-            padding-top: 80px; 
+            display: none; min-height: 100vh; padding-top: 80px; 
             animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .page.active { display: block; }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Navigation */
+        /* --- Navigation --- */
         nav {
-            position: fixed;
-            top: 0; width: 100%;
-            background-color: rgba(244, 244, 245, 0.85);
-            backdrop-filter: blur(12px);
-            z-index: 100;
-            border-bottom: 1px solid var(--border-color);
-            display: grid;
-            grid-template-columns: 2fr 7fr 2fr;
-            align-items: center;
+            position: fixed; top: 0; width: 100%;
+            background-color: rgba(244, 244, 245, 0.85); backdrop-filter: blur(12px);
+            z-index: 100; border-bottom: 1px solid var(--border-color);
+            display: grid; grid-template-columns: 2fr 7fr 2fr; align-items: center;
         }
-
         .logo { padding: 1.5rem 2rem; font-size: 1.2rem; font-weight: 700; border-right: 1px solid var(--border-color); }
-
         .nav-links { display: flex; padding: 0 2rem; gap: 1.5rem; justify-content: center; }
         .nav-links a { font-size: 0.8rem; text-transform: uppercase; font-weight: 700; position: relative; }
         .nav-links a::after {
@@ -121,18 +133,7 @@
         }
         .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
 
-        .nav-action {
-            display: block; padding: 1.5rem 2rem; border-left: 1px solid var(--border-color);
-            text-align: center; background: var(--text-main); color: var(--bg-color) !important;
-            font-weight: 700; text-transform: uppercase; font-size: 0.85rem; transition: background 0.3s;
-        }
-        .nav-action:hover { background: var(--accent); }
-
-        /* Mobile Menu */
-        .hamburger {
-            display: none; flex-direction: column; gap: 6px; padding: 1.5rem 2rem;
-            border-left: 1px solid var(--border-color); align-items: center; justify-content: center;
-        }
+        .hamburger { display: none; flex-direction: column; gap: 6px; padding: 1.5rem 2rem; border-left: 1px solid var(--border-color); align-items: center; justify-content: center; }
         .hamburger span { width: 25px; height: 2px; background-color: var(--text-main); transition: 0.3s ease; }
         .hamburger.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
         .hamburger.active span:nth-child(2) { opacity: 0; }
@@ -147,19 +148,23 @@
         .mobile-menu.active { transform: translateY(0); }
         .mobile-menu a { font-size: 1.5rem; font-weight: 700; text-transform: uppercase; }
 
-        /* Ticker */
+        /* --- Ticker --- */
         .ticker-wrap { width: 100%; overflow: hidden; background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 0.75rem 0; display: flex; white-space: nowrap; }
         .ticker { display: inline-block; animation: ticker 30s linear infinite; font-size: 0.85rem; font-weight: 700; }
         .ticker-item { display: inline-block; padding: 0 2rem; border-right: 1px solid var(--border-color); }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
 
-        /* PAGE 1: HOME */
+        /* =========================================================================
+           PAGE SECTIONS 
+        ========================================================================= */
+        
+        /* HOME */
         .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 85vh; border-bottom: 1px solid var(--border-color); }
         .hero-text { padding: 4rem; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--border-color); }
         .hero-badge { display: inline-block; border: 1px solid var(--border-color); padding: 0.5rem 1rem; font-size: 0.75rem; border-radius: 50px; margin-bottom: 2rem; width: max-content; }
         .hero h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; margin-bottom: 2rem; }
         .hero-img-container { position: relative; overflow: hidden; }
-        .hero-img-container img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s; }
+        .hero-img-container img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: transform 1.5s var(--transition-smooth), filter 0.5s; }
         .hero-img-container:hover img { transform: scale(1.05); filter: grayscale(0%); }
 
         .stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
@@ -170,53 +175,58 @@
 
         .about-section { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border-color); }
         .about-text { padding: 6rem 4rem; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--border-color); }
-        .about-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); }
+        .about-img { overflow: hidden; position: relative; }
+        .about-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: transform 1s ease; }
+        .about-img:hover img { transform: scale(1.03); filter: grayscale(50%); }
 
-        /* GENERAL GRID SYSTEMS */
+        /* SERVICES */
         .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-        .feature-card { border: 1px solid var(--border-color); background: var(--bg-secondary); transition: transform 0.3s, box-shadow 0.3s; }
-        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .feature-card { border: 1px solid var(--border-color); background: var(--bg-secondary); overflow: hidden; }
         .feature-img { height: 250px; border-bottom: 1px solid var(--border-color); overflow: hidden; }
-        .feature-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 0.5s; }
-        .feature-card:hover .feature-img img { filter: grayscale(0%); transform: scale(1.05); }
+        .feature-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: transform 0.8s ease, filter 0.5s; }
+        .feature-card:hover .feature-img img { filter: grayscale(0%); transform: scale(1.1); }
         .feature-content { padding: 2rem; }
         .feature-content ul li { font-size: 0.8rem; margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem; }
 
         .tech-stack { background: var(--text-main); color: var(--bg-color); }
         .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: #333; border: 1px solid #333; margin-top: 2rem; }
-        .tech-item { background: var(--text-main); padding: 2rem; text-align: center; transition: background 0.3s; }
-        .tech-item:hover { background: #1A1A1A; }
+        .tech-item { background: var(--text-main); padding: 2rem; text-align: center; transition: background 0.3s, transform 0.3s; }
+        .tech-item:hover { background: #1A1A1A; color: var(--accent); transform: translateY(-5px); z-index: 2; position: relative; }
 
         .process-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
-        .process-step { border-left: 2px solid var(--border-color); padding-left: 2rem; }
+        .process-step { border-left: 2px solid var(--border-color); padding-left: 2rem; transition: border-color 0.3s; }
         .step-number { font-size: 3rem; font-weight: 700; line-height: 1; margin-bottom: 1rem; color: var(--border-color); transition: color 0.3s; }
-        .process-step:hover .step-number { color: var(--accent); }
+        .process-step:hover { border-color: var(--text-main); }
+        .process-step:hover .step-number { color: var(--text-main); }
 
-        /* PORTFOLIO GRID */
+        /* WORK */
         .portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
         .portfolio-item { position: relative; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-secondary); }
-        .portfolio-item img { width: 100%; height: 450px; object-fit: cover; filter: grayscale(100%); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .portfolio-item img { width: 100%; height: 450px; object-fit: cover; filter: grayscale(100%); transition: all 0.6s var(--transition-smooth); }
         .portfolio-item:hover img { filter: grayscale(0%); transform: scale(1.05); }
-        .portfolio-meta { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); padding: 1.5rem; border-top: 1px solid var(--border-color); transform: translateY(100%); transition: transform 0.4s ease; }
+        .portfolio-meta { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); padding: 1.5rem; border-top: 1px solid var(--border-color); transform: translateY(100%); transition: transform 0.4s ease; backdrop-filter: blur(5px); }
         .portfolio-item:hover .portfolio-meta { transform: translateY(0); }
 
-        /* PRICING GRID */
+        /* PRICING */
         .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-        .price-card { border: 1px solid var(--border-color); background: var(--bg-secondary); padding: 3rem 2rem; text-align: center; transition: 0.3s; }
-        .price-card:hover { transform: translateY(-10px); border-color: var(--text-main); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .price-card { border: 1px solid var(--border-color); background: var(--bg-secondary); padding: 3rem 2rem; text-align: center; }
         .price-card .price { font-size: 3.5rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .btn-price { display: block; padding: 1rem; margin-top: 2rem; background: var(--bg-color); border: 1px solid var(--text-main); font-weight: 700; text-transform: uppercase; transition: 0.3s; }
-        .btn-price:hover { background: var(--text-main); color: var(--bg-color); }
-        .price-card.featured { border: 2px solid var(--text-main); }
+        .btn-price { display: block; padding: 1rem; margin-top: 2rem; background: var(--bg-color); border: 1px solid var(--text-main); font-weight: 700; text-transform: uppercase; transition: 0.3s; position: relative; overflow: hidden; z-index: 1;}
+        .btn-price::before { content: ''; position: absolute; top: 100%; left: 0; width: 100%; height: 100%; background: var(--text-main); z-index: -1; transition: top 0.3s; }
+        .btn-price:hover::before { top: 0; }
+        .btn-price:hover { color: var(--bg-secondary); }
+        .price-card.featured { border: 2px solid var(--text-main); transform: scale(1.05); }
+        .price-card.featured:hover { transform: scale(1.05) translateY(-10px); }
         .price-card.featured .btn-price { background: var(--text-main); color: var(--bg-color); }
+        .price-card.featured .btn-price::before { background: var(--accent); }
         .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
 
         /* CONTACT & FORMS */
         .contact-section { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border-color); }
         .contact-form-container { padding: 6rem 4rem; background: var(--bg-secondary); border-right: 1px solid var(--border-color); }
-        .input-group { margin-bottom: 1.5rem; }
-        .input-group input, .input-group textarea { width: 100%; padding: 1rem; background: var(--bg-color); border: 1px solid var(--border-color); font-family: 'Space Mono', monospace; outline: none; transition: 0.3s; }
-        .input-group input:focus, .input-group textarea:focus { border-color: var(--text-main); }
+        .input-group { margin-bottom: 1.5rem; position: relative; }
+        .input-group input, .input-group textarea { width: 100%; padding: 1.2rem 1rem; background: var(--bg-color); border: 1px solid var(--border-color); font-family: 'Space Mono', monospace; outline: none; transition: 0.3s; }
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--text-main); box-shadow: 4px 4px 0px rgba(0,0,0,0.1); }
         
         .contact-details { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
         .detail-block { padding: 3rem; border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: center; }
@@ -228,7 +238,9 @@
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 2fr; }
         .footer-col { padding: 4rem 3rem; border-right: 1px solid #333; }
         .footer-col:last-child { border-right: none; }
-        .footer-links li { margin-bottom: 1rem; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 1rem; transition: transform 0.3s; }
+        .footer-links li:hover { transform: translateX(5px); }
         .footer-links a { color: var(--bg-color); opacity: 0.8; }
         .footer-links a:hover { opacity: 1; color: var(--accent); }
         .footer-bottom { padding: 1.5rem 3rem; border-top: 1px solid #333; display: flex; justify-content: space-between; color: #888; text-transform: uppercase; }
@@ -237,18 +249,17 @@
         @media (max-width: 1024px) {
             * { cursor: auto !important; }
             #cursor { display: none !important; }
-
             nav { grid-template-columns: 1fr auto; }
             .nav-links, .nav-action { display: none; }
             .hamburger { display: flex; }
-
-            .hero, .stats-strip, .about-section, .contact-section, .footer-grid { grid-template-columns: 1fr; }
+            .hero, .stats-strip, .about-section, .contact-section, .footer-grid, .grid-2 { grid-template-columns: 1fr; }
             .hero-img-container, .about-img { min-height: 40vh; }
             .hero-text, .about-text, .contact-form-container { border-right: none; border-bottom: 1px solid var(--border-color); padding: 3rem 2rem; }
             .stat-box { border-right: none; border-bottom: 1px solid var(--border-color); }
-            
             .features-grid, .portfolio-grid, .pricing-grid, .process-grid, .faq-grid { grid-template-columns: 1fr; }
             .process-step { border-left: none; border-bottom: 1px solid var(--border-color); padding-left: 0; padding-bottom: 2rem; }
+            .price-card.featured { transform: none; }
+            .price-card.featured:hover { transform: translateY(-10px); }
             .contact-details { grid-template-columns: 1fr; }
             .detail-block { border-right: none; border-bottom: 1px solid var(--border-color); padding: 2rem; }
             .detail-block:last-child { border-bottom: none; }
@@ -270,9 +281,8 @@
             <a href="#work" class="interactable">Work</a>
             <a href="#pricing" class="interactable">Pricing</a>
             <a href="#contact" class="interactable">Contact</a>
-            <a href="#signup" class="interactable" style="color: var(--accent);">Portal</a>
         </div>
-        <a href="#contact" class="nav-action interactable">START PROJECT</a>
+        <a href="#contact" class="btn-dynamic interactable" style="padding: 1.5rem 2rem; border-left: 1px solid var(--border-color);">START PROJECT</a>
         
         <div class="hamburger interactable">
             <span></span><span></span><span></span>
@@ -284,25 +294,14 @@
         <a href="#services" class="mobile-link">Services</a>
         <a href="#work" class="mobile-link">Work</a>
         <a href="#pricing" class="mobile-link">Pricing</a>
-        <a href="#signup" class="mobile-link" style="color: var(--accent);">Client Portal</a>
         <a href="#contact" class="mobile-link mobile-action-btn">START PROJECT</a>
     </div>
 
     <main id="home" class="page active">
         <div class="ticker-wrap">
             <div class="ticker">
-                <div class="ticker-item">// WEB DESIGN</div>
-                <div class="ticker-item">// GRAPHIC DESIGN</div>
-                <div class="ticker-item">// BRAND IDENTITY</div>
-                <div class="ticker-item">// UI/UX ARCHITECTURE</div>
-                <div class="ticker-item">// LOGO CREATION</div>
-                <div class="ticker-item">// PRINT MEDIA</div>
-                <div class="ticker-item">// WEB DESIGN</div>
-                <div class="ticker-item">// GRAPHIC DESIGN</div>
-                <div class="ticker-item">// BRAND IDENTITY</div>
-                <div class="ticker-item">// UI/UX ARCHITECTURE</div>
-                <div class="ticker-item">// LOGO CREATION</div>
-                <div class="ticker-item">// PRINT MEDIA</div>
+                <div class="ticker-item">// WEB DESIGN</div><div class="ticker-item">// GRAPHIC DESIGN</div><div class="ticker-item">// BRAND IDENTITY</div><div class="ticker-item">// UI/UX ARCHITECTURE</div><div class="ticker-item">// LOGO CREATION</div><div class="ticker-item">// PRINT MEDIA</div>
+                <div class="ticker-item">// WEB DESIGN</div><div class="ticker-item">// GRAPHIC DESIGN</div><div class="ticker-item">// BRAND IDENTITY</div><div class="ticker-item">// UI/UX ARCHITECTURE</div><div class="ticker-item">// LOGO CREATION</div><div class="ticker-item">// PRINT MEDIA</div>
             </div>
         </div>
 
@@ -313,7 +312,7 @@
                 <p>We engineer brand experiences. From pixel-perfect website design to structural graphic identities, we build aesthetics that convert.</p>
                 <a href="#work" class="interactable" style="text-decoration: underline; font-weight: 700; margin-top: 1rem; display: inline-block;">View Our Portfolio →</a>
             </div>
-            <div class="hero-img-container gs-reveal-img interactable">
+            <div class="hero-img-container interactable gs-reveal-img">
                 <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop" alt="Digital Studio Architecture">
             </div>
         </header>
@@ -328,12 +327,28 @@
         <section class="about-section">
             <div class="about-text gs-reveal">
                 <h2>The Architecture of Design.</h2>
-                <p>At Digital Trade, we don't just create images; we build structural visual systems. Founded by Indrajeet Pista and headquartered in Dantewada, our studio bridges the gap between raw creativity and engineered functionality.</p>
-                <p>Whether you need a full-scale corporate rebrand, high-end e-commerce web development, or striking print media, our approach remains the same: minimalist execution, maximum impact.</p>
+                <p>At Digital Trade, we don't just create images; we build structural visual systems. Founded by Indrajeet Pista and headquartered in Shegaon, Balod, our studio bridges the gap between raw creativity and engineered functionality.</p>
                 <a href="#contact" class="interactable" style="text-decoration: underline; font-weight: 700; margin-top: 2rem; display: inline-block;">Consult with the Architect →</a>
             </div>
-            <div class="about-img gs-reveal-img interactable">
+            <div class="about-img interactable gs-reveal-img">
                 <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop" alt="Studio Workspace">
+            </div>
+        </section>
+
+        <section class="section-padding border-bottom" style="background-color: var(--text-main); color: var(--bg-color);">
+            <div class="section-header gs-reveal">
+                <h2 style="color: var(--bg-color);">Our Philosophy</h2>
+                <p style="color: #A1A1AA;">Why brands trust us with their digital infrastructure.</p>
+            </div>
+            <div class="grid-2">
+                <div class="gs-reveal">
+                    <h3 style="color: var(--accent); margin-bottom: 1rem;">// Minimalist Execution</h3>
+                    <p style="color: #D4D4D8;">We strip away the unnecessary. Every pixel, line of code, and graphic asset serves a specific structural purpose. Clutter kills conversion; clarity scales brands.</p>
+                </div>
+                <div class="gs-reveal">
+                    <h3 style="color: var(--accent); margin-bottom: 1rem;">// Code + Creativity</h3>
+                    <p style="color: #D4D4D8;">Design without function is just art. Function without design is invisible. We fuse high-end visual aesthetics with robust web frameworks to ensure your brand operates at peak efficiency.</p>
+                </div>
             </div>
         </section>
     </main>
@@ -345,28 +360,28 @@
                 <p>Our studio specializes in the structural execution of visual identities and digital environments.</p>
             </div>
             <div class="features-grid">
-                <div class="feature-card interactable gs-reveal">
+                <div class="feature-card hover-lift interactable gs-reveal">
                     <div class="feature-img"><img src="https://images.unsplash.com/photo-1507238692062-8a0cb44ce74b?q=80&w=800&auto=format&fit=crop" alt="Web Development"></div>
                     <div class="feature-content">
                         <h3>Web Architecture</h3>
                         <p>High-performance, responsive websites built with clean code and intuitive user experiences.</p>
-                        <ul><li>UI/UX Wireframing</li><li>Front-End Development</li><li>E-Commerce Solutions</li></ul>
+                        <ul class="hover-shift-list"><li>UI/UX Wireframing</li><li>Front-End Development</li><li>E-Commerce Solutions</li></ul>
                     </div>
                 </div>
-                <div class="feature-card interactable gs-reveal">
+                <div class="feature-card hover-lift interactable gs-reveal">
                     <div class="feature-img"><img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=800&auto=format&fit=crop" alt="Graphic Design"></div>
                     <div class="feature-content">
                         <h3>Graphic Systems</h3>
                         <p>Striking visual assets engineered for both digital platforms and physical print media.</p>
-                        <ul><li>Vector Illustrations</li><li>Marketing Collateral</li><li>Packaging Design</li></ul>
+                        <ul class="hover-shift-list"><li>Vector Illustrations</li><li>Marketing Collateral</li><li>Packaging Design</li></ul>
                     </div>
                 </div>
-                <div class="feature-card interactable gs-reveal">
+                <div class="feature-card hover-lift interactable gs-reveal">
                     <div class="feature-img"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=800&auto=format&fit=crop" alt="Brand Identity"></div>
                     <div class="feature-content">
                         <h3>Brand Identity</h3>
                         <p>Comprehensive branding strategies that establish market presence and consistency.</p>
-                        <ul><li>Logo Creation</li><li>Typography Selection</li><li>Brand Guidelines</li></ul>
+                        <ul class="hover-shift-list"><li>Logo Creation</li><li>Typography Selection</li><li>Brand Guidelines</li></ul>
                     </div>
                 </div>
             </div>
@@ -378,13 +393,24 @@
                 <p style="color: #A1A1AA;">The tools and frameworks we use to engineer your digital presence.</p>
             </div>
             <div class="tech-grid gs-reveal">
-                <div class="tech-item interactable">HTML5 / CSS3</div>
-                <div class="tech-item interactable">JavaScript ES6</div>
-                <div class="tech-item interactable">React / Next.js</div>
-                <div class="tech-item interactable">GSAP Motion</div>
-                <div class="tech-item interactable">Shopify / Liquid</div>
-                <div class="tech-item interactable">Figma UI/UX</div>
-                <div class="tech-item interactable">Adobe CC</div>
+                <div class="tech-item interactable">HTML5 / CSS3</div><div class="tech-item interactable">JavaScript ES6</div><div class="tech-item interactable">React / Next.js</div><div class="tech-item interactable">GSAP Motion</div><div class="tech-item interactable">Shopify / Liquid</div><div class="tech-item interactable">Figma UI/UX</div><div class="tech-item interactable">Adobe CC</div>
+            </div>
+        </section>
+
+        <section class="section-padding border-bottom" style="background-color: var(--bg-secondary);">
+            <div class="section-header gs-reveal">
+                <h2>Service Guarantees</h2>
+                <p>What you can expect when you initialize a project with Digital Trade.</p>
+            </div>
+            <div class="grid-2">
+                <div class="gs-reveal" style="border-left: 3px solid var(--text-main); padding-left: 2rem;">
+                    <h3>Transparent Operations</h3>
+                    <p style="margin-top: 0.5rem;">No hidden fees, no scope creep. Every project is scoped, documented, and delivered exactly to the agreed-upon structural parameters.</p>
+                </div>
+                <div class="gs-reveal" style="border-left: 3px solid var(--accent); padding-left: 2rem;">
+                    <h3>Source File Handover</h3>
+                    <p style="margin-top: 0.5rem;">We don't hold your brand hostage. Upon project completion, all raw Figma, Illustrator, and codebase files are securely transferred to your servers.</p>
+                </div>
             </div>
         </section>
 
@@ -403,25 +429,47 @@
     </main>
 
     <main id="work" class="page">
+        <section class="section-padding border-bottom" style="background: var(--bg-secondary);">
+            <div class="section-header gs-reveal">
+                <h2>Featured Architecture</h2>
+                <p>Highlighting our most comprehensive digital deployment.</p>
+            </div>
+            <div class="grid-2" style="align-items: center;">
+                <div class="gs-reveal-img interactable" style="overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop" style="width: 100%; filter: grayscale(100%); transition: 0.5s;" onmouseover="this.style.filter='grayscale(0%)'" onmouseout="this.style.filter='grayscale(100%)'">
+                </div>
+                <div class="gs-reveal">
+                    <div style="font-size: 0.8rem; color: var(--accent); font-weight: bold; margin-bottom: 1rem; text-transform: uppercase;">// Case Study_01</div>
+                    <h3 style="font-size: 2rem; margin-bottom: 1rem;">Virox Global Expansion</h3>
+                    <p style="margin-bottom: 1.5rem;">A complete structural overhaul of Virox's e-commerce platform. We engineered a custom Shopify architecture paired with an aggressive, minimalist brand identity overhaul.</p>
+                    <ul class="hover-shift-list" style="list-style: none; margin-bottom: 2rem; font-size: 0.85rem;">
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">+ UI/UX Overhaul</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">+ Logo System Redesign</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">+ Marketing Video Assets</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
         <section class="section-padding border-bottom">
             <div class="section-header gs-reveal">
-                <h2>Selected Work</h2>
-                <p>A curated archive of deployed visual identities, interfaces, and graphic systems.</p>
+                <h2>The Archive</h2>
+                <p>A curated grid of deployed visual identities, interfaces, and graphic systems.</p>
             </div>
             <div class="portfolio-grid">
-                <div class="portfolio-item interactable gs-reveal">
+                <div class="portfolio-item hover-lift interactable gs-reveal">
                     <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" alt="Virox Apparel Project">
                     <div class="portfolio-meta"><h3>Virox Apparel</h3><p>E-Commerce UI / Brand Identity</p></div>
                 </div>
-                <div class="portfolio-item interactable gs-reveal">
+                <div class="portfolio-item hover-lift interactable gs-reveal">
                     <img src="https://images.unsplash.com/photo-1634942537034-2531766767d1?q=80&w=1000&auto=format&fit=crop" alt="Athrex Energy Project">
                     <div class="portfolio-meta"><h3>Athrex Energy Pvt. Ltd.</h3><p>Corporate Branding / Web Design</p></div>
                 </div>
-                <div class="portfolio-item interactable gs-reveal">
+                <div class="portfolio-item hover-lift interactable gs-reveal">
                     <img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?q=80&w=1000&auto=format&fit=crop" alt="Nirvaan Store Project">
                     <div class="portfolio-meta"><h3>nirvaan.store</h3><p>Logo System / Social Media Graphics</p></div>
                 </div>
-                <div class="portfolio-item interactable gs-reveal">
+                <div class="portfolio-item hover-lift interactable gs-reveal">
                     <img src="https://images.unsplash.com/photo-1541462608143-67571c6738dd?q=80&w=1000&auto=format&fit=crop" alt="Digital Trade Editorial">
                     <div class="portfolio-meta"><h3>Digital Trade Editorial</h3><p>Print Media / Layout Design</p></div>
                 </div>
@@ -436,12 +484,15 @@
                 <p>Transparent pricing models for structural design and development services.</p>
             </div>
             <div class="pricing-grid">
-                <div class="price-card interactable gs-reveal">
+                <div class="price-card hover-lift interactable gs-reveal">
                     <h3>Identity Starter</h3>
                     <div class="price">₹1,499</div>
                     <span class="billing">One-time payment</span>
-                    <ul>
-                        <li>Primary & Secondary Logo</li><li>Basic Color Palette</li><li>Typography Selection</li><li>2 Revision Rounds</li>
+                    <ul class="hover-shift-list" style="list-style:none; text-align:left; margin: 2rem 0;">
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Primary & Secondary Logo</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Basic Color Palette</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Typography Selection</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ 2 Revision Rounds</li>
                     </ul>
                     <a href="#contact" class="btn-price">Request Tier</a>
                 </div>
@@ -449,27 +500,48 @@
                     <h3>Digital Platform</h3>
                     <div class="price">₹14,990</div>
                     <span class="billing">One-time payment</span>
-                    <ul>
-                        <li>Full Brand Identity System</li><li>5-Page Custom Website</li><li>Responsive UI/UX Design</li><li>Basic SEO Setup</li>
+                    <ul class="hover-shift-list" style="list-style:none; text-align:left; margin: 2rem 0;">
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Full Brand Identity System</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Custom Website Deployment</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Responsive UI/UX Design</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Basic SEO Setup</li>
                     </ul>
                     <a href="#contact" class="btn-price">Request Tier</a>
                 </div>
-                <div class="price-card interactable gs-reveal">
+                <div class="price-card hover-lift interactable gs-reveal">
                     <h3>E-Commerce & Scale</h3>
                     <div class="price">Custom</div>
                     <span class="billing">Retainer or Fixed Scope</span>
-                    <ul>
-                        <li>Full E-Commerce Architecture</li><li>Payment Gateway Integration</li><li>Ongoing Graphic Support</li><li>Priority 24/7 SLA</li>
+                    <ul class="hover-shift-list" style="list-style:none; text-align:left; margin: 2rem 0;">
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Full E-Commerce Architecture</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Payment Gateway Integration</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Ongoing Graphic Support</li>
+                        <li style="margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem;">✓ Priority 24/7 SLA</li>
                     </ul>
                     <a href="#contact" class="btn-price">Contact Sales</a>
                 </div>
             </div>
         </section>
 
-        <section class="section-padding border-bottom">
+        <section class="section-padding border-bottom" style="background-color: var(--text-main); color: var(--bg-color);">
             <div class="section-header gs-reveal">
-                <h2>Frequently Asked Questions</h2>
+                <h2 style="color: var(--bg-color);">A La Carte Modules</h2>
+                <p style="color: #A1A1AA;">Need specific structural upgrades? We offer modular pricing.</p>
             </div>
+            <div class="grid-2">
+                <div class="gs-reveal" style="border-bottom: 1px solid #333; padding-bottom: 1.5rem;">
+                    <h4 style="color: var(--bg-color); display: flex; justify-content: space-between;">Video Ad Production <span style="color: var(--accent);">Starts at ₹2,500</span></h4>
+                    <p style="color: #888; font-size: 0.85rem; margin-top: 0.5rem;">High-energy motion graphics and scene compilations for social media marketing.</p>
+                </div>
+                <div class="gs-reveal" style="border-bottom: 1px solid #333; padding-bottom: 1.5rem;">
+                    <h4 style="color: var(--bg-color); display: flex; justify-content: space-between;">T-Shirt Print Design <span style="color: var(--accent);">Starts at ₹999</span></h4>
+                    <p style="color: #888; font-size: 0.85rem; margin-top: 0.5rem;">Custom vector artwork engineered specifically for DTG and screen printing.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding border-bottom">
+            <div class="section-header gs-reveal"><h2>Frequently Asked Questions</h2></div>
             <div class="faq-grid">
                 <div class="faq-item gs-reveal"><h4>What is the standard turnaround time?</h4><p>Brand identities typically require 2-3 weeks. Full-scale web platforms take between 4-8 weeks.</p></div>
                 <div class="faq-item gs-reveal"><h4>Do you provide ongoing website maintenance?</h4><p>Yes. Post-deployment, we offer technical retainers to handle updates and integration.</p></div>
@@ -494,8 +566,8 @@
                     <div class="input-group">
                         <textarea id="wa-message" rows="5" class="interactable" placeholder="PROJECT PARAMETERS..." required></textarea>
                     </div>
-                    <button type="submit" class="nav-action interactable" style="width: 100%; border: none; font-family: 'Space Mono'; background-color: var(--whatsapp); color: var(--text-main);">
-                        SEND VIA WHATSAPP
+                    <button type="submit" class="btn-dynamic interactable" style="width: 100%; text-align: center; border: 1px solid var(--text-main);">
+                        INITIATE SEQUENCE [WHATSAPP]
                     </button>
                 </form>
             </div>
@@ -512,46 +584,33 @@
                 </div>
                 <div class="detail-block gs-reveal">
                     <h4>Comms Network</h4>
-                    <p>E: <a href="mailto:trade@digital.com" class="interactable">trade@digital.com</a></p>
-                    <p>T: <a href="tel:+917646846030" class="interactable">+91 7646846030</a></p>
+                    <p>E: <a href="mailto:trade@digital.com" class="interactable hover-lift" style="display:inline-block;">trade@digital.com</a></p>
+                    <p>T: <a href="tel:+917646846030" class="interactable hover-lift" style="display:inline-block;">+91 7646846030</a></p>
                 </div>
                 <div class="detail-block gs-reveal">
                     <h4>Digital Nodes</h4>
                     <div class="social-links">
-                        <a href="#" class="interactable">Instagram <span>↗</span></a>
-                        <a href="#" class="interactable">Behance <span>↗</span></a>
+                        <a href="#" class="interactable hover-shift-list">Instagram <span>↗</span></a>
+                        <a href="#" class="interactable hover-shift-list">Behance <span>↗</span></a>
                     </div>
                 </div>
             </div>
         </section>
-    </main>
 
-    <main id="signup" class="page">
-        <section class="contact-section" style="min-height: 80vh; border-bottom: none; display: flex; align-items: center; justify-content: center; background: var(--bg-color);">
-            <div class="contact-form-container gs-reveal" style="border-right: none; border: 1px solid var(--border-color); max-width: 550px; width: 100%; padding: 4rem; box-shadow: 0 20px 40px rgba(0,0,0,0.05); background: var(--bg-secondary);">
-                
-                <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center;">Client Portal.</h2>
-                <p style="text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 0.85rem;">Create an architecture node to track your deployments.</p>
-                
-                <form id="portal-signup" onsubmit="event.preventDefault(); alert('SYSTEM ALERT: Node initialized successfully. Welcome to Digital Trade.');">
-                    <div class="input-group">
-                        <input type="text" class="interactable" placeholder="COMPANY / USERNAME" required>
-                    </div>
-                    <div class="input-group">
-                        <input type="email" class="interactable" placeholder="SECURE EMAIL" required>
-                    </div>
-                    <div class="input-group">
-                        <input type="password" class="interactable" placeholder="ENCRYPTION KEY (PASSWORD)" required>
-                    </div>
-                    <button type="submit" class="nav-action interactable" style="width: 100%; border: none; font-family: 'Space Mono'; margin-top: 1rem; background: var(--text-main); color: var(--bg-color);">
-                        INITIALIZE NODE
-                    </button>
-                    
-                    <p style="text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-muted);">
-                        Already established? <a href="#" class="interactable" style="color: var(--accent); text-decoration: underline; font-weight: 700;">Authenticate here</a>.
-                    </p>
-                </form>
-
+        <section class="section-padding border-bottom" style="text-align: center; background: var(--bg-secondary);">
+            <div class="section-header gs-reveal" style="margin: 0 auto 4rem auto;">
+                <h2>Operating Protocols</h2>
+                <p>What happens after you hit submit?</p>
+            </div>
+            <div class="grid-2" style="text-align: left; max-width: 900px; margin: 0 auto;">
+                <div class="gs-reveal" style="padding: 2rem; border: 1px solid var(--border-color);">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">01. Connection Established</h3>
+                    <p style="font-size: 0.85rem;">Your transmission is routed directly to our secure WhatsApp line. We will review your parameters and respond within 12 operating hours.</p>
+                </div>
+                <div class="gs-reveal" style="padding: 2rem; border: 1px solid var(--border-color);">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">02. Architecture Briefing</h3>
+                    <p style="font-size: 0.85rem;">We will schedule a direct communication (voice or text) to finalize structural requirements, timelines, and budgetary allocations.</p>
+                </div>
             </div>
         </section>
     </main>
@@ -561,12 +620,12 @@
             <div class="footer-col">
                 <div class="logo interactable" style="padding: 0; border: none; margin-bottom: 1rem;">DIGITAL.TRADE</div>
                 <p style="color: #888; font-size: 0.8rem; max-width: 250px;">A minimalist design and development agency engineering future-proof brand architectures.</p>
-                <div class="terminal-readout">
+                <div class="terminal-readout" style="background: #111; padding: 1.5rem; border: 1px solid #333; font-size: 0.75rem; color: var(--terminal-green); margin-top: 1.5rem; font-family: 'Space Mono', monospace;">
                     > SYSTEM_CHECK: CREATIVE_OK<br>> LATENCY: 0.0ms<br>> STUDIO_STATUS: ACTIVE<br><span style="animation: blink 1s infinite;">_</span>
                 </div>
             </div>
             <div class="footer-col">
-                <div class="footer-title">Disciplines</div>
+                <div class="footer-title" style="color: #888; margin-bottom: 2rem; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;">Disciplines</div>
                 <ul class="footer-links">
                     <li><a href="#services" class="interactable">UI/UX Design</a></li>
                     <li><a href="#services" class="interactable">Brand Identity</a></li>
@@ -574,15 +633,15 @@
                 </ul>
             </div>
             <div class="footer-col">
-                <div class="footer-title">Resources</div>
+                <div class="footer-title" style="color: #888; margin-bottom: 2rem; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;">Resources</div>
                 <ul class="footer-links">
                     <li><a href="#work" class="interactable">Design Portfolio</a></li>
                     <li><a href="#pricing" class="interactable">Pricing Tiers</a></li>
-                    <li><a href="#signup" class="interactable">Client Portal</a></li>
+                    <li><a href="#pricing" class="interactable">Knowledge Base</a></li>
                 </ul>
             </div>
             <div class="footer-col">
-                <div class="footer-title">Global Network</div>
+                <div class="footer-title" style="color: #888; margin-bottom: 2rem; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;">Global Network</div>
                 <p style="color: #888; margin-bottom: 1rem;">Designing from Dantewada, shipping globally.</p>
                 <div style="width: 100%; height: 120px; border: 1px solid #333; overflow: hidden; opacity: 0.8;">
                     <iframe 
@@ -599,12 +658,12 @@
         </div>
         <div class="footer-bottom">
             <div>© 2026 DIGITAL TRADE. ALL RIGHTS RESERVED.</div>
-            <div>ARCHITECT: INDRAJEET PISTA | BUILD 9934</div>
+            <div>ARCHITECT: INDRAJEET PISTA | BUILD 9935</div>
         </div>
     </footer>
 
     <script>
-        // --- Bulletproof WhatsApp Integration Logic ---
+        // --- WhatsApp Logic ---
         const waForm = document.getElementById('whatsapp-form');
         
         if (waForm) {
@@ -615,22 +674,21 @@
                 const email = document.getElementById('wa-email').value;
                 const message = document.getElementById('wa-message').value;
                 
-                // WhatsApp Number (Country Code + Number)
+                // WhatsApp Number
                 const whatsappNumber = "917646846030";
 
                 const whatsappText = `*NEW PROJECT TRANSMISSION*%0A%0A*Name:* ${name}%0A*Email:* ${email}%0A%0A*Project Parameters:*%0A${message}`;
                 const whatsappURL = `https://wa.me/${whatsappNumber}?text=${whatsappText}`;
 
-                // Redirects current window to WhatsApp directly (Bypasses popup blockers)
+                // Redirect to WhatsApp
                 window.location.href = whatsappURL;
             });
         }
 
-        // --- Custom Cursor Logic ---
+        // --- Custom Cursor ---
         const cursor = document.getElementById('cursor');
         const interactables = document.querySelectorAll('.interactable, a, button, input, textarea, .portfolio-item, .feature-card, .price-card');
 
-        // Check if device supports hover
         const isHoverableDevice = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
         if (isHoverableDevice) {
@@ -645,7 +703,7 @@
             });
         }
 
-        // --- Single Page Application (SPA) Router Logic ---
+        // --- SPA Router ---
         const pages = document.querySelectorAll('.page');
         const navLinks = document.querySelectorAll('.nav-links a');
         const mobileLinksList = document.querySelectorAll('.mobile-link');
@@ -655,27 +713,23 @@
         function handleRouting() {
             let hash = window.location.hash || '#home';
             
-            // Hide all pages, show target
             pages.forEach(page => page.classList.remove('active'));
             const targetPage = document.querySelector(hash);
             if (targetPage) targetPage.classList.add('active');
 
-            // Update Nav Active States
             navLinks.forEach(link => {
                 link.classList.remove('active');
                 if(link.getAttribute('href') === hash) link.classList.add('active');
             });
 
-            // Re-trigger GSAP animations
             ScrollTrigger.refresh();
             window.scrollTo(0,0);
         }
 
         window.addEventListener('hashchange', handleRouting);
-        // Initial load check
         if(window.location.hash) handleRouting();
 
-        // --- Mobile Menu Toggle ---
+        // --- Mobile Menu ---
         hamburger.addEventListener('click', () => {
             hamburger.classList.toggle('active');
             mobileMenu.classList.toggle('active');
@@ -690,7 +744,7 @@
             });
         });
 
-        // --- GSAP Scroll Animations ---
+        // --- GSAP Animations ---
         gsap.registerPlugin(ScrollTrigger);
 
         const revealElements = document.querySelectorAll(".gs-reveal");
