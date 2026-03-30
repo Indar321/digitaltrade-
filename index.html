@@ -172,7 +172,7 @@
         .about-text { padding: 6rem 4rem; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--border-color); }
         .about-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); }
 
-        /* PAGE 2: SERVICES */
+        /* GENERAL GRID SYSTEMS */
         .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
         .feature-card { border: 1px solid var(--border-color); background: var(--bg-secondary); transition: transform 0.3s, box-shadow 0.3s; }
         .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
@@ -192,7 +192,7 @@
         .step-number { font-size: 3rem; font-weight: 700; line-height: 1; margin-bottom: 1rem; color: var(--border-color); transition: color 0.3s; }
         .process-step:hover .step-number { color: var(--accent); }
 
-        /* PAGE 3: WORK */
+        /* PORTFOLIO GRID */
         .portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
         .portfolio-item { position: relative; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-secondary); }
         .portfolio-item img { width: 100%; height: 450px; object-fit: cover; filter: grayscale(100%); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -200,7 +200,7 @@
         .portfolio-meta { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); padding: 1.5rem; border-top: 1px solid var(--border-color); transform: translateY(100%); transition: transform 0.4s ease; }
         .portfolio-item:hover .portfolio-meta { transform: translateY(0); }
 
-        /* PAGE 4: PRICING */
+        /* PRICING GRID */
         .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
         .price-card { border: 1px solid var(--border-color); background: var(--bg-secondary); padding: 3rem 2rem; text-align: center; transition: 0.3s; }
         .price-card:hover { transform: translateY(-10px); border-color: var(--text-main); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
@@ -209,10 +209,9 @@
         .btn-price:hover { background: var(--text-main); color: var(--bg-color); }
         .price-card.featured { border: 2px solid var(--text-main); }
         .price-card.featured .btn-price { background: var(--text-main); color: var(--bg-color); }
-
         .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
 
-        /* PAGE 5: CONTACT */
+        /* CONTACT & FORMS */
         .contact-section { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border-color); }
         .contact-form-container { padding: 6rem 4rem; background: var(--bg-secondary); border-right: 1px solid var(--border-color); }
         .input-group { margin-bottom: 1.5rem; }
@@ -271,6 +270,7 @@
             <a href="#work" class="interactable">Work</a>
             <a href="#pricing" class="interactable">Pricing</a>
             <a href="#contact" class="interactable">Contact</a>
+            <a href="#signup" class="interactable" style="color: var(--accent);">Portal</a>
         </div>
         <a href="#contact" class="nav-action interactable">START PROJECT</a>
         
@@ -284,6 +284,7 @@
         <a href="#services" class="mobile-link">Services</a>
         <a href="#work" class="mobile-link">Work</a>
         <a href="#pricing" class="mobile-link">Pricing</a>
+        <a href="#signup" class="mobile-link" style="color: var(--accent);">Client Portal</a>
         <a href="#contact" class="mobile-link mobile-action-btn">START PROJECT</a>
     </div>
 
@@ -483,7 +484,7 @@
             <div class="contact-form-container gs-reveal">
                 <h2 style="font-size: 3rem; margin-bottom: 2rem;">Initiate Sequence.</h2>
                 
-                <form id="whatsapp-form" onsubmit="sendToWhatsApp(event)">
+                <form id="whatsapp-form">
                     <div class="input-group">
                         <input type="text" id="wa-name" class="interactable" placeholder="NAME / CALLSIGN" required>
                     </div>
@@ -525,6 +526,36 @@
         </section>
     </main>
 
+    <main id="signup" class="page">
+        <section class="contact-section" style="min-height: 80vh; border-bottom: none; display: flex; align-items: center; justify-content: center; background: var(--bg-color);">
+            <div class="contact-form-container gs-reveal" style="border-right: none; border: 1px solid var(--border-color); max-width: 550px; width: 100%; padding: 4rem; box-shadow: 0 20px 40px rgba(0,0,0,0.05); background: var(--bg-secondary);">
+                
+                <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center;">Client Portal.</h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 0.85rem;">Create an architecture node to track your deployments.</p>
+                
+                <form id="portal-signup" onsubmit="event.preventDefault(); alert('SYSTEM ALERT: Node initialized successfully. Welcome to Digital Trade.');">
+                    <div class="input-group">
+                        <input type="text" class="interactable" placeholder="COMPANY / USERNAME" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" class="interactable" placeholder="SECURE EMAIL" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" class="interactable" placeholder="ENCRYPTION KEY (PASSWORD)" required>
+                    </div>
+                    <button type="submit" class="nav-action interactable" style="width: 100%; border: none; font-family: 'Space Mono'; margin-top: 1rem; background: var(--text-main); color: var(--bg-color);">
+                        INITIALIZE NODE
+                    </button>
+                    
+                    <p style="text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                        Already established? <a href="#" class="interactable" style="color: var(--accent); text-decoration: underline; font-weight: 700;">Authenticate here</a>.
+                    </p>
+                </form>
+
+            </div>
+        </section>
+    </main>
+
     <footer>
         <div class="footer-grid">
             <div class="footer-col">
@@ -547,7 +578,7 @@
                 <ul class="footer-links">
                     <li><a href="#work" class="interactable">Design Portfolio</a></li>
                     <li><a href="#pricing" class="interactable">Pricing Tiers</a></li>
-                    <li><a href="#pricing" class="interactable">Knowledge Base</a></li>
+                    <li><a href="#signup" class="interactable">Client Portal</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -568,31 +599,38 @@
         </div>
         <div class="footer-bottom">
             <div>© 2026 DIGITAL TRADE. ALL RIGHTS RESERVED.</div>
-            <div>ARCHITECT: INDRAJEET PISTA | BUILD 9933</div>
+            <div>ARCHITECT: INDRAJEET PISTA | BUILD 9934</div>
         </div>
     </footer>
 
     <script>
-        // --- WhatsApp Integration Logic ---
-        function sendToWhatsApp(event) {
-            event.preventDefault();
+        // --- Bulletproof WhatsApp Integration Logic ---
+        const waForm = document.getElementById('whatsapp-form');
+        
+        if (waForm) {
+            waForm.addEventListener('submit', function(event) {
+                event.preventDefault();
 
-            const name = document.getElementById('wa-name').value;
-            const email = document.getElementById('wa-email').value;
-            const message = document.getElementById('wa-message').value;
-            const whatsappNumber = "917646846030";
+                const name = document.getElementById('wa-name').value;
+                const email = document.getElementById('wa-email').value;
+                const message = document.getElementById('wa-message').value;
+                
+                // WhatsApp Number (Country Code + Number)
+                const whatsappNumber = "917646846030";
 
-            const whatsappText = `*NEW PROJECT TRANSMISSION*%0A%0A*Name:* ${name}%0A*Email:* ${email}%0A%0A*Project Parameters:*%0A${message}`;
-            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${whatsappText}`;
+                const whatsappText = `*NEW PROJECT TRANSMISSION*%0A%0A*Name:* ${name}%0A*Email:* ${email}%0A%0A*Project Parameters:*%0A${message}`;
+                const whatsappURL = `https://wa.me/${whatsappNumber}?text=${whatsappText}`;
 
-            window.open(whatsappURL, '_blank');
+                // Redirects current window to WhatsApp directly (Bypasses popup blockers)
+                window.location.href = whatsappURL;
+            });
         }
 
-        // --- Custom Cursor Logic (Fixed for Visibility) ---
+        // --- Custom Cursor Logic ---
         const cursor = document.getElementById('cursor');
         const interactables = document.querySelectorAll('.interactable, a, button, input, textarea, .portfolio-item, .feature-card, .price-card');
 
-        // Check if device supports hover (disables custom cursor on mobile touch screens)
+        // Check if device supports hover
         const isHoverableDevice = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
         if (isHoverableDevice) {
@@ -628,16 +666,16 @@
                 if(link.getAttribute('href') === hash) link.classList.add('active');
             });
 
-            // Re-trigger GSAP animations for the new page
+            // Re-trigger GSAP animations
             ScrollTrigger.refresh();
             window.scrollTo(0,0);
         }
 
         window.addEventListener('hashchange', handleRouting);
-        // Initial load route check
+        // Initial load check
         if(window.location.hash) handleRouting();
 
-        // --- Mobile Menu Toggle Logic ---
+        // --- Mobile Menu Toggle ---
         hamburger.addEventListener('click', () => {
             hamburger.classList.toggle('active');
             mobileMenu.classList.toggle('active');
