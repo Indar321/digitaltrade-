@@ -21,18 +21,18 @@
             --text-muted: #71717A;
             --border-color: #D4D4D8;
             --accent: #2563EB; 
-            --terminal-green: #16A34A;
+            --whatsapp: #25D366;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            cursor: none !important; /* Hide default cursor for desktop */
         }
 
         html {
             scroll-behavior: smooth;
-            scroll-padding-top: 80px; 
         }
 
         body {
@@ -44,23 +44,34 @@
             line-height: 1.6;
         }
 
-        /* Perfectly Balanced Custom Scrollbar */
-        ::-webkit-scrollbar { 
-            width: 14px; 
+        /* --- Advanced Custom Cursor (Fixed Visibility) --- */
+        #cursor {
+            position: fixed;
+            top: 0; left: 0;
+            width: 20px; height: 20px;
+            background-color: #FFFFFF; 
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference; /* Creates the base inversion */
+            transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1), 
+                        height 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+                        background-color 0.3s ease,
+                        opacity 0.3s ease;
         }
-        ::-webkit-scrollbar-track { 
-            background: var(--bg-color); 
-            margin: 12px 0; /* Balances the top and bottom spacing */
+        #cursor.hovered {
+            width: 60px; height: 60px;
+            background-color: var(--accent); /* Overrides white to brand blue */
+            mix-blend-mode: normal; /* Removes the inversion glitch on gray images */
+            opacity: 0.9;
         }
-        ::-webkit-scrollbar-thumb { 
-            background-color: #A1A1AA; 
-            border-radius: 10px; 
-            border: 4px solid var(--bg-color); 
-            background-clip: padding-box; /* Makes the border act as transparent padding */
-        }
-        ::-webkit-scrollbar-thumb:hover { 
-            background-color: var(--text-main); 
-        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background-color: var(--border-color); }
+        ::-webkit-scrollbar-thumb:hover { background-color: var(--text-muted); }
 
         /* Typography & Utilities */
         h1, h2, h3, h4 { font-weight: 700; text-transform: uppercase; letter-spacing: -1px; }
@@ -73,13 +84,26 @@
         .section-header { margin-bottom: 4rem; max-width: 600px; }
         .section-header h2 { font-size: 2.5rem; margin-bottom: 1rem; }
 
+        /* --- SPA Page Logic --- */
+        .page { 
+            display: none; 
+            min-height: 100vh; 
+            padding-top: 80px; 
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .page.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Navigation */
         nav {
             position: fixed;
-            top: 0;
-            width: 100%;
-            background-color: rgba(244, 244, 245, 0.95);
-            backdrop-filter: blur(10px);
+            top: 0; width: 100%;
+            background-color: rgba(244, 244, 245, 0.85);
+            backdrop-filter: blur(12px);
             z-index: 100;
             border-bottom: 1px solid var(--border-color);
             display: grid;
@@ -87,224 +111,145 @@
             align-items: center;
         }
 
-        .logo {
-            padding: 1.5rem 2rem;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border-right: 1px solid var(--border-color);
-        }
+        .logo { padding: 1.5rem 2rem; font-size: 1.2rem; font-weight: 700; border-right: 1px solid var(--border-color); }
 
-        .nav-links {
-            display: flex;
-            padding: 0 2rem;
-            gap: 1.5rem;
-            justify-content: center;
+        .nav-links { display: flex; padding: 0 2rem; gap: 1.5rem; justify-content: center; }
+        .nav-links a { font-size: 0.8rem; text-transform: uppercase; font-weight: 700; position: relative; }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+            background: var(--text-main); transition: width 0.3s ease;
         }
-
-        .nav-links a { font-size: 0.8rem; text-transform: uppercase; font-weight: 700; }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
 
         .nav-action {
-            display: block;
-            padding: 1.5rem 2rem;
-            border-left: 1px solid var(--border-color);
-            text-align: center;
-            background: var(--text-main);
-            color: var(--bg-color) !important;
-            font-weight: 700;
-            transition: background 0.3s;
-            text-transform: uppercase;
-            font-size: 0.85rem;
+            display: block; padding: 1.5rem 2rem; border-left: 1px solid var(--border-color);
+            text-align: center; background: var(--text-main); color: var(--bg-color) !important;
+            font-weight: 700; text-transform: uppercase; font-size: 0.85rem; transition: background 0.3s;
         }
-        .nav-action:hover { background: var(--accent); color: white !important; }
+        .nav-action:hover { background: var(--accent); }
 
-        /* Mobile Menu Toggle & Overlay */
+        /* Mobile Menu */
         .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 6px;
-            cursor: pointer;
-            padding: 1.5rem 2rem;
-            border-left: 1px solid var(--border-color);
-            align-items: center;
-            justify-content: center;
+            display: none; flex-direction: column; gap: 6px; padding: 1.5rem 2rem;
+            border-left: 1px solid var(--border-color); align-items: center; justify-content: center;
         }
-        .hamburger span {
-            width: 25px;
-            height: 2px;
-            background-color: var(--text-main);
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
+        .hamburger span { width: 25px; height: 2px; background-color: var(--text-main); transition: 0.3s ease; }
         .hamburger.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
         .hamburger.active span:nth-child(2) { opacity: 0; }
         .hamburger.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
         .mobile-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(244, 244, 245, 0.98);
-            backdrop-filter: blur(15px);
-            z-index: 99; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem;
-            transform: translateY(-100%);
-            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-            overflow-y: auto;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: rgba(244, 244, 245, 0.98); backdrop-filter: blur(15px);
+            z-index: 99; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
+            transform: translateY(-100%); transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
         }
         .mobile-menu.active { transform: translateY(0); }
-        .mobile-menu a {
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: -0.5px;
-        }
-        .mobile-action-btn {
-            margin-top: 1rem;
-            padding: 1rem 3rem;
-            background: var(--text-main);
-            color: var(--bg-color) !important;
-            border-radius: 50px;
-        }
+        .mobile-menu a { font-size: 1.5rem; font-weight: 700; text-transform: uppercase; }
 
-        /* Services Ticker */
-        .ticker-wrap {
-            width: 100%;
-            overflow: hidden;
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 0.75rem 0;
-            margin-top: 67px; 
-            display: flex;
-            white-space: nowrap;
-        }
-        .ticker { display: inline-block; animation: ticker 35s linear infinite; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; }
+        /* Ticker */
+        .ticker-wrap { width: 100%; overflow: hidden; background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 0.75rem 0; display: flex; white-space: nowrap; }
+        .ticker { display: inline-block; animation: ticker 30s linear infinite; font-size: 0.85rem; font-weight: 700; }
         .ticker-item { display: inline-block; padding: 0 2rem; border-right: 1px solid var(--border-color); }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
 
-        /* Hero Section */
-        .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 80vh; border-bottom: 1px solid var(--border-color); }
+        /* PAGE 1: HOME */
+        .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 85vh; border-bottom: 1px solid var(--border-color); }
         .hero-text { padding: 4rem; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--border-color); }
-        .hero-badge { display: inline-block; border: 1px solid var(--border-color); padding: 0.5rem 1rem; font-size: 0.75rem; border-radius: 50px; margin-bottom: 2rem; width: max-content; text-transform: uppercase; }
+        .hero-badge { display: inline-block; border: 1px solid var(--border-color); padding: 0.5rem 1rem; font-size: 0.75rem; border-radius: 50px; margin-bottom: 2rem; width: max-content; }
         .hero h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; margin-bottom: 2rem; }
-        .hero p { font-size: 1.1rem; max-width: 450px; margin-bottom: 3rem; }
-        .hero-img-container { position: relative; overflow: hidden; background: #e0e0e0; }
-        .hero-img-container img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(1.1); transition: filter 0.5s ease, transform 5s ease; }
-        .hero-img-container:hover img { filter: grayscale(0%) contrast(1); transform: scale(1.05); }
+        .hero-img-container { position: relative; overflow: hidden; }
+        .hero-img-container img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s; }
+        .hero-img-container:hover img { transform: scale(1.05); filter: grayscale(0%); }
 
-        /* Stats Strip */
-        .stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--bg-secondary); }
+        .stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
         .stat-box { padding: 2.5rem 2rem; border-right: 1px solid var(--border-color); text-align: center; }
         .stat-box:last-child { border-right: none; }
-        .stat-number { font-size: 2.5rem; font-weight: 700; color: var(--text-main); }
-        .stat-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); margin-top: 0.5rem; }
+        .stat-number { font-size: 2.5rem; font-weight: 700; }
+        .stat-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); }
 
-        /* About Us Section */
         .about-section { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border-color); }
         .about-text { padding: 6rem 4rem; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--border-color); }
-        .about-text h2 { font-size: 3rem; margin-bottom: 1.5rem; }
-        .about-text p { margin-bottom: 1.5rem; font-size: 1rem; }
-        .about-img { position: relative; overflow: hidden; }
         .about-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); }
 
-        /* Core Services Grid */
+        /* PAGE 2: SERVICES */
         .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-        .feature-card { border: 1px solid var(--border-color); background: var(--bg-secondary); transition: transform 0.3s ease; }
-        .feature-card:hover { transform: translateY(-5px); border-color: var(--text-main); }
+        .feature-card { border: 1px solid var(--border-color); background: var(--bg-secondary); transition: transform 0.3s, box-shadow 0.3s; }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
         .feature-img { height: 250px; border-bottom: 1px solid var(--border-color); overflow: hidden; }
-        .feature-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(80%); transition: filter 0.3s; }
-        .feature-card:hover .feature-img img { filter: grayscale(0%); }
+        .feature-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 0.5s; }
+        .feature-card:hover .feature-img img { filter: grayscale(0%); transform: scale(1.05); }
         .feature-content { padding: 2rem; }
-        .feature-content h3 { font-size: 1.2rem; margin-bottom: 1rem; }
-        .feature-content p { font-size: 0.85rem; margin-bottom: 1.5rem; }
-        .feature-content ul { list-style: none; font-size: 0.75rem; color: var(--text-main); }
-        .feature-content ul li { margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem; }
+        .feature-content ul li { font-size: 0.8rem; margin-bottom: 0.5rem; border-bottom: 1px dotted var(--border-color); padding-bottom: 0.5rem; }
 
-        /* Process Page (Brief) */
-        .process-section { background-color: var(--text-main); color: var(--bg-color); }
-        .process-section .section-header h2 { color: var(--bg-color); }
-        .process-section .section-header p { color: #888; }
+        .tech-stack { background: var(--text-main); color: var(--bg-color); }
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: #333; border: 1px solid #333; margin-top: 2rem; }
+        .tech-item { background: var(--text-main); padding: 2rem; text-align: center; transition: background 0.3s; }
+        .tech-item:hover { background: #1A1A1A; }
+
         .process-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
-        .process-step { border-left: 1px solid #333; padding-left: 2rem; }
-        .process-step h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--bg-color); }
-        .process-step p { font-size: 0.85rem; color: #888; }
-        .step-number { font-size: 3rem; font-weight: 700; color: #333; line-height: 1; margin-bottom: 1rem; }
+        .process-step { border-left: 2px solid var(--border-color); padding-left: 2rem; }
+        .step-number { font-size: 3rem; font-weight: 700; line-height: 1; margin-bottom: 1rem; color: var(--border-color); transition: color 0.3s; }
+        .process-step:hover .step-number { color: var(--accent); }
 
-        /* Portfolio / Work Section */
+        /* PAGE 3: WORK */
         .portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
         .portfolio-item { position: relative; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-secondary); }
-        .portfolio-item img { width: 100%; height: 400px; object-fit: cover; filter: grayscale(90%); transition: all 0.4s ease; }
-        .portfolio-item:hover img { filter: grayscale(0%); transform: scale(1.02); }
-        .portfolio-meta { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); padding: 1.5rem; border-top: 1px solid var(--border-color); transform: translateY(100%); transition: transform 0.3s ease; backdrop-filter: blur(5px); }
+        .portfolio-item img { width: 100%; height: 450px; object-fit: cover; filter: grayscale(100%); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .portfolio-item:hover img { filter: grayscale(0%); transform: scale(1.05); }
+        .portfolio-meta { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); padding: 1.5rem; border-top: 1px solid var(--border-color); transform: translateY(100%); transition: transform 0.4s ease; }
         .portfolio-item:hover .portfolio-meta { transform: translateY(0); }
-        .portfolio-meta h3 { font-size: 1.1rem; margin-bottom: 0.2rem; }
-        .portfolio-meta p { font-size: 0.8rem; text-transform: uppercase; }
 
-        /* Pricing Section */
+        /* PAGE 4: PRICING */
         .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-        .price-card { border: 1px solid var(--border-color); background: var(--bg-secondary); padding: 3rem 2rem; text-align: center; transition: transform 0.3s ease; }
-        .price-card:hover { transform: translateY(-5px); border-color: var(--text-main); }
-        .price-card h3 { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 1rem; }
-        .price-card .price { font-size: 3.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; line-height: 1; }
-        .price-card .billing { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2rem; display: block; }
-        .price-card ul { list-style: none; margin-bottom: 2.5rem; text-align: left; }
-        .price-card ul li { padding: 0.75rem 0; border-bottom: 1px dotted var(--border-color); font-size: 0.85rem; color: var(--text-main); display: flex; align-items: center; }
-        .price-card ul li::before { content: "✓"; margin-right: 10px; color: var(--terminal-green); font-weight: bold; }
-        .btn-price { display: block; padding: 1rem; background: var(--bg-color); border: 1px solid var(--text-main); color: var(--text-main); font-weight: 700; text-transform: uppercase; transition: all 0.3s; }
+        .price-card { border: 1px solid var(--border-color); background: var(--bg-secondary); padding: 3rem 2rem; text-align: center; transition: 0.3s; }
+        .price-card:hover { transform: translateY(-10px); border-color: var(--text-main); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .price-card .price { font-size: 3.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .btn-price { display: block; padding: 1rem; margin-top: 2rem; background: var(--bg-color); border: 1px solid var(--text-main); font-weight: 700; text-transform: uppercase; transition: 0.3s; }
         .btn-price:hover { background: var(--text-main); color: var(--bg-color); }
         .price-card.featured { border: 2px solid var(--text-main); }
         .price-card.featured .btn-price { background: var(--text-main); color: var(--bg-color); }
-        .price-card.featured .btn-price:hover { background: var(--accent); border-color: var(--accent); }
 
-        /* FAQ Page (Brief) */
         .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-        .faq-item { margin-bottom: 2rem; }
-        .faq-item h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main); }
-        .faq-item p { font-size: 0.9rem; }
 
-        /* Contact & Operations Grid */
-        .contact-section { display: grid; grid-template-columns: 1fr 2fr; background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); }
-        .contact-header { padding: 4rem; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: center; }
-        .contact-header h2 { font-size: 3rem; margin-bottom: 1rem; line-height: 1; }
+        /* PAGE 5: CONTACT */
+        .contact-section { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border-color); }
+        .contact-form-container { padding: 6rem 4rem; background: var(--bg-secondary); border-right: 1px solid var(--border-color); }
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group input, .input-group textarea { width: 100%; padding: 1rem; background: var(--bg-color); border: 1px solid var(--border-color); font-family: 'Space Mono', monospace; outline: none; transition: 0.3s; }
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--text-main); }
+        
         .contact-details { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
         .detail-block { padding: 3rem; border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: center; }
         .detail-block:nth-child(2n) { border-right: none; }
         .detail-block:nth-last-child(-n+2) { border-bottom: none; }
-        .detail-block h4 { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
-        .detail-block p, .detail-block a { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
-        .detail-block a:hover { color: var(--accent); text-decoration: underline; }
-        .social-links { display: flex; flex-direction: column; gap: 0.5rem; }
-        .social-links a { font-size: 1rem; font-weight: 400; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
 
-        /* Advanced Technical Footer */
+        /* Footer */
         footer { background-color: var(--text-main); color: var(--bg-color); font-size: 0.85rem; }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 2fr; }
         .footer-col { padding: 4rem 3rem; border-right: 1px solid #333; }
         .footer-col:last-child { border-right: none; }
-        .footer-title { color: #888; margin-bottom: 2rem; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
-        .footer-links { list-style: none; }
         .footer-links li { margin-bottom: 1rem; }
         .footer-links a { color: var(--bg-color); opacity: 0.8; }
         .footer-links a:hover { opacity: 1; color: var(--accent); }
-        .terminal-readout { background: #111; padding: 1.5rem; border: 1px solid #333; font-size: 0.75rem; color: var(--terminal-green); margin-top: 1.5rem; font-family: 'Space Mono', monospace; }
-        .footer-bottom { padding: 1.5rem 3rem; border-top: 1px solid #333; display: flex; justify-content: space-between; color: #888; font-size: 0.75rem; text-transform: uppercase; }
+        .footer-bottom { padding: 1.5rem 3rem; border-top: 1px solid #333; display: flex; justify-content: space-between; color: #888; text-transform: uppercase; }
 
         /* Mobile Adjustments */
         @media (max-width: 1024px) {
+            * { cursor: auto !important; }
+            #cursor { display: none !important; }
+
             nav { grid-template-columns: 1fr auto; }
             .nav-links, .nav-action { display: none; }
             .hamburger { display: flex; }
 
             .hero, .stats-strip, .about-section, .contact-section, .footer-grid { grid-template-columns: 1fr; }
             .hero-img-container, .about-img { min-height: 40vh; }
-            .hero-text, .about-text, .contact-header { border-right: none; border-bottom: 1px solid var(--border-color); padding: 3rem 2rem; }
+            .hero-text, .about-text, .contact-form-container { border-right: none; border-bottom: 1px solid var(--border-color); padding: 3rem 2rem; }
             .stat-box { border-right: none; border-bottom: 1px solid var(--border-color); }
+            
             .features-grid, .portfolio-grid, .pricing-grid, .process-grid, .faq-grid { grid-template-columns: 1fr; }
-            .process-step { border-left: none; border-bottom: 1px solid #333; padding-left: 0; padding-bottom: 2rem; }
+            .process-step { border-left: none; border-bottom: 1px solid var(--border-color); padding-left: 0; padding-bottom: 2rem; }
             .contact-details { grid-template-columns: 1fr; }
             .detail-block { border-right: none; border-bottom: 1px solid var(--border-color); padding: 2rem; }
             .detail-block:last-child { border-bottom: none; }
@@ -316,396 +261,399 @@
 </head>
 <body>
 
+    <div id="cursor"></div>
+
     <nav>
-        <div class="logo">DIGITAL.TRADE</div>
+        <div class="logo interactable">DIGITAL.TRADE</div>
         <div class="nav-links">
-            <a href="#about">About</a>
-            <a href="#services">Services</a>
-            <a href="#process">Process</a>
-            <a href="#portfolio">Portfolio</a>
-            <a href="#price">Pricing</a>
-            <a href="#faq">FAQ</a>
+            <a href="#home" class="interactable active">Home</a>
+            <a href="#services" class="interactable">Services</a>
+            <a href="#work" class="interactable">Work</a>
+            <a href="#pricing" class="interactable">Pricing</a>
+            <a href="#contact" class="interactable">Contact</a>
         </div>
-        <a href="#contact" class="nav-action" style="text-decoration: none;">START PROJECT</a>
+        <a href="#contact" class="nav-action interactable">START PROJECT</a>
         
-        <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
+        <div class="hamburger interactable">
+            <span></span><span></span><span></span>
         </div>
     </nav>
 
     <div class="mobile-menu">
-        <a href="#about" class="mobile-link">About</a>
+        <a href="#home" class="mobile-link">Home</a>
         <a href="#services" class="mobile-link">Services</a>
-        <a href="#process" class="mobile-link">Process</a>
-        <a href="#portfolio" class="mobile-link">Portfolio</a>
-        <a href="#price" class="mobile-link">Pricing</a>
-        <a href="#faq" class="mobile-link">FAQ</a>
+        <a href="#work" class="mobile-link">Work</a>
+        <a href="#pricing" class="mobile-link">Pricing</a>
         <a href="#contact" class="mobile-link mobile-action-btn">START PROJECT</a>
     </div>
 
-    <div class="ticker-wrap">
-        <div class="ticker">
-            <div class="ticker-item">// WEB DESIGN</div>
-            <div class="ticker-item">// GRAPHIC DESIGN</div>
-            <div class="ticker-item">// BRAND IDENTITY</div>
-            <div class="ticker-item">// UI/UX ARCHITECTURE</div>
-            <div class="ticker-item">// LOGO CREATION</div>
-            <div class="ticker-item">// PRINT MEDIA</div>
+    <main id="home" class="page active">
+        <div class="ticker-wrap">
+            <div class="ticker">
+                <div class="ticker-item">// WEB DESIGN</div>
+                <div class="ticker-item">// GRAPHIC DESIGN</div>
+                <div class="ticker-item">// BRAND IDENTITY</div>
+                <div class="ticker-item">// UI/UX ARCHITECTURE</div>
+                <div class="ticker-item">// LOGO CREATION</div>
+                <div class="ticker-item">// PRINT MEDIA</div>
+                <div class="ticker-item">// WEB DESIGN</div>
+                <div class="ticker-item">// GRAPHIC DESIGN</div>
+                <div class="ticker-item">// BRAND IDENTITY</div>
+                <div class="ticker-item">// UI/UX ARCHITECTURE</div>
+                <div class="ticker-item">// LOGO CREATION</div>
+                <div class="ticker-item">// PRINT MEDIA</div>
+            </div>
+        </div>
+
+        <header class="hero">
+            <div class="hero-text gs-reveal">
+                <div class="hero-badge">System Status: Creative Engine Online</div>
+                <h1>Precision Digital Architecture.</h1>
+                <p>We engineer brand experiences. From pixel-perfect website design to structural graphic identities, we build aesthetics that convert.</p>
+                <a href="#work" class="interactable" style="text-decoration: underline; font-weight: 700; margin-top: 1rem; display: inline-block;">View Our Portfolio &rarr;</a>
+            </div>
+            <div class="hero-img-container gs-reveal-img interactable">
+                <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop" alt="Digital Studio Architecture">
+            </div>
+        </header>
+
+        <section class="stats-strip">
+            <div class="stat-box gs-reveal"><div class="stat-number">200+</div><div class="stat-label">Projects Deployed</div></div>
+            <div class="stat-box gs-reveal"><div class="stat-number">100%</div><div class="stat-label">Bespoke Design</div></div>
+            <div class="stat-box gs-reveal"><div class="stat-number">Global</div><div class="stat-label">Client Roster</div></div>
+            <div class="stat-box gs-reveal"><div class="stat-number">24/7</div><div class="stat-label">Creative Support</div></div>
+        </section>
+
+        <section class="about-section">
+            <div class="about-text gs-reveal">
+                <h2>The Architecture of Design.</h2>
+                <p>At Digital Trade, we don't just create images; we build structural visual systems. Founded by Indrajeet Pista and headquartered in Shegaon, Balod, our studio bridges the gap between raw creativity and engineered functionality.</p>
+                <p>Whether you need a full-scale corporate rebrand, high-end e-commerce web development, or striking print media, our approach remains the same: minimalist execution, maximum impact.</p>
+                <a href="#contact" class="interactable" style="text-decoration: underline; font-weight: 700; margin-top: 2rem; display: inline-block;">Consult with the Architect &rarr;</a>
+            </div>
+            <div class="about-img gs-reveal-img interactable">
+                <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop" alt="Studio Workspace">
+            </div>
+        </section>
+    </main>
+
+    <main id="services" class="page">
+        <section class="section-padding border-bottom">
+            <div class="section-header gs-reveal">
+                <h2>Core Infrastructure</h2>
+                <p>Our studio specializes in the structural execution of visual identities and digital environments.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card interactable gs-reveal">
+                    <div class="feature-img"><img src="https://images.unsplash.com/photo-1507238692062-8a0cb44ce74b?q=80&w=800&auto=format&fit=crop" alt="Web Development"></div>
+                    <div class="feature-content">
+                        <h3>Web Architecture</h3>
+                        <p>High-performance, responsive websites built with clean code and intuitive user experiences.</p>
+                        <ul><li>UI/UX Wireframing</li><li>Front-End Development</li><li>E-Commerce Solutions</li></ul>
+                    </div>
+                </div>
+                <div class="feature-card interactable gs-reveal">
+                    <div class="feature-img"><img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=800&auto=format&fit=crop" alt="Graphic Design"></div>
+                    <div class="feature-content">
+                        <h3>Graphic Systems</h3>
+                        <p>Striking visual assets engineered for both digital platforms and physical print media.</p>
+                        <ul><li>Vector Illustrations</li><li>Marketing Collateral</li><li>Packaging Design</li></ul>
+                    </div>
+                </div>
+                <div class="feature-card interactable gs-reveal">
+                    <div class="feature-img"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=800&auto=format&fit=crop" alt="Brand Identity"></div>
+                    <div class="feature-content">
+                        <h3>Brand Identity</h3>
+                        <p>Comprehensive branding strategies that establish market presence and consistency.</p>
+                        <ul><li>Logo Creation</li><li>Typography Selection</li><li>Brand Guidelines</li></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding tech-stack border-bottom">
+            <div class="section-header gs-reveal">
+                <h2 style="color: var(--bg-color);">The Lab / Tech Stack</h2>
+                <p style="color: #A1A1AA;">The tools and frameworks we use to engineer your digital presence.</p>
+            </div>
+            <div class="tech-grid gs-reveal">
+                <div class="tech-item interactable">HTML5 / CSS3</div>
+                <div class="tech-item interactable">JavaScript ES6</div>
+                <div class="tech-item interactable">React / Next.js</div>
+                <div class="tech-item interactable">GSAP Motion</div>
+                <div class="tech-item interactable">Shopify / Liquid</div>
+                <div class="tech-item interactable">Figma UI/UX</div>
+                <div class="tech-item interactable">Adobe CC</div>
+            </div>
+        </section>
+
+        <section class="section-padding border-bottom">
+            <div class="section-header gs-reveal">
+                <h2>Deployment Process</h2>
+                <p>Our standardized methodology ensures precision from initial concept to final launch.</p>
+            </div>
+            <div class="process-grid">
+                <div class="process-step gs-reveal"><div class="step-number">01</div><h3>Discovery</h3><p>We analyze your market position, competitive landscape, and structural brand requirements.</p></div>
+                <div class="process-step gs-reveal"><div class="step-number">02</div><h3>Architecture</h3><p>Wireframing, sketching, and mapping out the user journey and visual hierarchy.</p></div>
+                <div class="process-step gs-reveal"><div class="step-number">03</div><h3>Development</h3><p>Writing clean code and engineering high-fidelity vector assets for production.</p></div>
+                <div class="process-step gs-reveal"><div class="step-number">04</div><h3>Deployment</h3><p>Final quality assurance checks, server deployment, and handover of all brand assets.</p></div>
+            </div>
+        </section>
+    </main>
+
+    <main id="work" class="page">
+        <section class="section-padding border-bottom">
+            <div class="section-header gs-reveal">
+                <h2>Selected Work</h2>
+                <p>A curated archive of deployed visual identities, interfaces, and graphic systems.</p>
+            </div>
+            <div class="portfolio-grid">
+                <div class="portfolio-item interactable gs-reveal">
+                    <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" alt="Virox Apparel Project">
+                    <div class="portfolio-meta"><h3>Virox Apparel</h3><p>E-Commerce UI / Brand Identity</p></div>
+                </div>
+                <div class="portfolio-item interactable gs-reveal">
+                    <img src="https://images.unsplash.com/photo-1634942537034-2531766767d1?q=80&w=1000&auto=format&fit=crop" alt="Athrex Energy Project">
+                    <div class="portfolio-meta"><h3>Athrex Energy Pvt. Ltd.</h3><p>Corporate Branding / Web Design</p></div>
+                </div>
+                <div class="portfolio-item interactable gs-reveal">
+                    <img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?q=80&w=1000&auto=format&fit=crop" alt="Nirvaan Store Project">
+                    <div class="portfolio-meta"><h3>nirvaan.store</h3><p>Logo System / Social Media Graphics</p></div>
+                </div>
+                <div class="portfolio-item interactable gs-reveal">
+                    <img src="https://images.unsplash.com/photo-1541462608143-67571c6738dd?q=80&w=1000&auto=format&fit=crop" alt="Digital Trade Editorial">
+                    <div class="portfolio-meta"><h3>Digital Trade Editorial</h3><p>Print Media / Layout Design</p></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <main id="pricing" class="page">
+        <section class="section-padding border-bottom">
+            <div class="section-header gs-reveal">
+                <h2>Deployment Tiers</h2>
+                <p>Transparent pricing models for structural design and development services.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="price-card interactable gs-reveal">
+                    <h3>Identity Starter</h3>
+                    <div class="price">₹1,499</div>
+                    <span class="billing">One-time payment</span>
+                    <ul>
+                        <li>Primary & Secondary Logo</li><li>Basic Color Palette</li><li>Typography Selection</li><li>2 Revision Rounds</li>
+                    </ul>
+                    <a href="#contact" class="btn-price">Request Tier</a>
+                </div>
+                <div class="price-card featured interactable gs-reveal">
+                    <h3>Digital Platform</h3>
+                    <div class="price">₹14,990</div>
+                    <span class="billing">One-time payment</span>
+                    <ul>
+                        <li>Full Brand Identity System</li><li>5-Page Custom Website</li><li>Responsive UI/UX Design</li><li>Basic SEO Setup</li>
+                    </ul>
+                    <a href="#contact" class="btn-price">Request Tier</a>
+                </div>
+                <div class="price-card interactable gs-reveal">
+                    <h3>E-Commerce & Scale</h3>
+                    <div class="price">Custom</div>
+                    <span class="billing">Retainer or Fixed Scope</span>
+                    <ul>
+                        <li>Full E-Commerce Architecture</li><li>Payment Gateway Integration</li><li>Ongoing Graphic Support</li><li>Priority 24/7 SLA</li>
+                    </ul>
+                    <a href="#contact" class="btn-price">Contact Sales</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding border-bottom">
+            <div class="section-header gs-reveal">
+                <h2>Frequently Asked Questions</h2>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-item gs-reveal"><h4>What is the standard turnaround time?</h4><p>Brand identities typically require 2-3 weeks. Full-scale web platforms take between 4-8 weeks.</p></div>
+                <div class="faq-item gs-reveal"><h4>Do you provide ongoing website maintenance?</h4><p>Yes. Post-deployment, we offer technical retainers to handle updates and integration.</p></div>
+                <div class="faq-item gs-reveal"><h4>What platforms do you build websites on?</h4><p>We engineer custom solutions using HTML/CSS/JS, as well as CMS platforms like Shopify.</p></div>
+                <div class="faq-item gs-reveal"><h4>Who owns the final design assets?</h4><p>Upon final payment, all intellectual property rights and raw source files are fully transferred.</p></div>
+            </div>
+        </section>
+    </main>
+
+    <main id="contact" class="page">
+        <section class="contact-section">
+            <div class="contact-form-container gs-reveal">
+                <h2 style="font-size: 3rem; margin-bottom: 2rem;">Initiate Sequence.</h2>
+                
+                <form id="whatsapp-form" onsubmit="sendToWhatsApp(event)">
+                    <div class="input-group">
+                        <input type="text" id="wa-name" class="interactable" placeholder="NAME / CALLSIGN" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="wa-email" class="interactable" placeholder="TRANSMISSION EMAIL" required>
+                    </div>
+                    <div class="input-group">
+                        <textarea id="wa-message" rows="5" class="interactable" placeholder="PROJECT PARAMETERS..." required></textarea>
+                    </div>
+                    <button type="submit" class="nav-action interactable" style="width: 100%; border: none; font-family: 'Space Mono'; background-color: var(--whatsapp); color: var(--text-main);">
+                        SEND VIA WHATSAPP
+                    </button>
+                </form>
+            </div>
             
-            <div class="ticker-item">// WEB DESIGN</div>
-            <div class="ticker-item">// GRAPHIC DESIGN</div>
-            <div class="ticker-item">// BRAND IDENTITY</div>
-            <div class="ticker-item">// UI/UX ARCHITECTURE</div>
-            <div class="ticker-item">// LOGO CREATION</div>
-            <div class="ticker-item">// PRINT MEDIA</div>
-        </div>
-    </div>
-
-    <header class="hero">
-        <div class="hero-text gs-reveal">
-            <div class="hero-badge">System Status: Creative Engine Online</div>
-            <h1>Precision Digital Architecture.</h1>
-            <p>We engineer brand experiences. From pixel-perfect website design to structural graphic identities, we build aesthetics that convert.</p>
-            <a href="#portfolio" style="text-decoration: underline; font-weight: 700; margin-top: 1rem; display: inline-block;">View Our Portfolio &rarr;</a>
-        </div>
-        <div class="hero-img-container gs-reveal-img">
-            <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop" alt="Digital Studio Architecture">
-        </div>
-    </header>
-
-    <section class="stats-strip border-bottom">
-        <div class="stat-box gs-reveal">
-            <div class="stat-number">200+</div>
-            <div class="stat-label">Projects Deployed</div>
-        </div>
-        <div class="stat-box gs-reveal">
-            <div class="stat-number">100%</div>
-            <div class="stat-label">Bespoke Design</div>
-        </div>
-        <div class="stat-box gs-reveal">
-            <div class="stat-number">Global</div>
-            <div class="stat-label">Client Roster</div>
-        </div>
-        <div class="stat-box gs-reveal">
-            <div class="stat-number">24/7</div>
-            <div class="stat-label">Creative Support</div>
-        </div>
-    </section>
-
-    <section id="about" class="about-section">
-        <div class="about-text gs-reveal">
-            <h2>The Architecture of Design.</h2>
-            <p>At Digital Trade, we don't just create images; we build structural visual systems. Founded by Indrajeet Pista and headquartered in Dantewada, our studio bridges the gap between raw creativity and engineered functionality.</p>
-            <p>Whether you need a full-scale corporate rebrand, high-end e-commerce web development, or striking print media, our approach remains the same: minimalist execution, maximum impact.</p>
-            <a href="#contact" style="text-decoration: underline; font-weight: 700; margin-top: 2rem; display: inline-block;">Consult with the Architect &rarr;</a>
-        </div>
-        <div class="about-img gs-reveal-img">
-            <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop" alt="Studio Workspace">
-        </div>
-    </section>
-
-    <section id="services" class="section-padding border-bottom">
-        <div class="section-header gs-reveal">
-            <h2>Core Infrastructure</h2>
-            <p>Our studio specializes in the structural execution of visual identities and digital environments.</p>
-        </div>
-        <div class="features-grid">
-            <div class="feature-card gs-reveal">
-                <div class="feature-img">
-                    <img src="https://images.unsplash.com/photo-1507238692062-8a0cb44ce74b?q=80&w=800&auto=format&fit=crop" alt="Web Development">
+            <div class="contact-details">
+                <div class="detail-block gs-reveal">
+                    <h4>Leadership / Owner</h4>
+                    <p>Indrajeet Pista</p>
+                    <p style="font-weight: 400; font-size: 0.85rem; color: var(--text-muted);">Lead Architect</p>
                 </div>
-                <div class="feature-content">
-                    <h3>Web Architecture</h3>
-                    <p>High-performance, responsive websites built with clean code and intuitive user experiences.</p>
-                    <ul>
-                        <li>UI/UX Wireframing</li>
-                        <li>Front-End Development</li>
-                        <li>E-Commerce Solutions</li>
-                    </ul>
+                <div class="detail-block gs-reveal">
+                    <h4>Base of Operations</h4>
+                    <p>Shegaon, Balod,<br>Chhattisgarh, India</p>
+                </div>
+                <div class="detail-block gs-reveal">
+                    <h4>Comms Network</h4>
+                    <p>E: <a href="mailto:trade@digital.com" class="interactable">trade@digital.com</a></p>
+                    <p>T: <a href="tel:+917646846030" class="interactable">+91 7646846030</a></p>
+                </div>
+                <div class="detail-block gs-reveal">
+                    <h4>Digital Nodes</h4>
+                    <div class="social-links">
+                        <a href="#" class="interactable">Instagram <span>&#8599;</span></a>
+                        <a href="#" class="interactable">Behance <span>&#8599;</span></a>
+                    </div>
                 </div>
             </div>
-            <div class="feature-card gs-reveal">
-                <div class="feature-img">
-                    <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=800&auto=format&fit=crop" alt="Graphic Design">
-                </div>
-                <div class="feature-content">
-                    <h3>Graphic Systems</h3>
-                    <p>Striking visual assets engineered for both digital platforms and physical print media.</p>
-                    <ul>
-                        <li>Vector Illustrations</li>
-                        <li>Marketing Collateral</li>
-                        <li>Packaging Design</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="feature-card gs-reveal">
-                <div class="feature-img">
-                    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=800&auto=format&fit=crop" alt="Brand Identity">
-                </div>
-                <div class="feature-content">
-                    <h3>Brand Identity</h3>
-                    <p>Comprehensive branding strategies that establish market presence and consistency.</p>
-                    <ul>
-                        <li>Logo Creation</li>
-                        <li>Typography Selection</li>
-                        <li>Brand Guidelines</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="process" class="section-padding process-section border-bottom">
-        <div class="section-header gs-reveal">
-            <h2>Deployment Process</h2>
-            <p>Our standardized methodology ensures precision from initial concept to final launch.</p>
-        </div>
-        <div class="process-grid">
-            <div class="process-step gs-reveal">
-                <div class="step-number">01</div>
-                <h3>Discovery</h3>
-                <p>We analyze your market position, competitive landscape, and structural brand requirements.</p>
-            </div>
-            <div class="process-step gs-reveal">
-                <div class="step-number">02</div>
-                <h3>Architecture</h3>
-                <p>Wireframing, sketching, and mapping out the user journey and visual hierarchy.</p>
-            </div>
-            <div class="process-step gs-reveal">
-                <div class="step-number">03</div>
-                <h3>Development</h3>
-                <p>Writing clean code and engineering high-fidelity vector assets for production.</p>
-            </div>
-            <div class="process-step gs-reveal">
-                <div class="step-number">04</div>
-                <h3>Deployment</h3>
-                <p>Final quality assurance checks, server deployment, and handover of all brand assets.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="portfolio" class="section-padding border-bottom">
-        <div class="section-header gs-reveal">
-            <h2>Selected Work</h2>
-            <p>A curated archive of deployed visual identities, interfaces, and graphic systems.</p>
-        </div>
-        <div class="portfolio-grid">
-            <div class="portfolio-item gs-reveal">
-                <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000&auto=format&fit=crop" alt="Project 1">
-                <div class="portfolio-meta">
-                    <h3>Virox Apparel</h3>
-                    <p>E-Commerce UI / Brand Identity</p>
-                </div>
-            </div>
-            <div class="portfolio-item gs-reveal">
-                <img src="https://images.unsplash.com/photo-1634942537034-2531766767d1?q=80&w=1000&auto=format&fit=crop" alt="Project 2">
-                <div class="portfolio-meta">
-                    <h3>Athrex Energy</h3>
-                    <p>Corporate Branding / Web Design</p>
-                </div>
-            </div>
-            <div class="portfolio-item gs-reveal">
-                <img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?q=80&w=1000&auto=format&fit=crop" alt="Project 3">
-                <div class="portfolio-meta">
-                    <h3>Nirvaan Store</h3>
-                    <p>Logo System / Social Media Graphics</p>
-                </div>
-            </div>
-            <div class="portfolio-item gs-reveal">
-                <img src="https://images.unsplash.com/photo-1541462608143-67571c6738dd?q=80&w=1000&auto=format&fit=crop" alt="Project 4">
-                <div class="portfolio-meta">
-                    <h3>Digital Trade Editorial</h3>
-                    <p>Print Media / Layout Design</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="price" class="section-padding border-bottom">
-        <div class="section-header gs-reveal">
-            <h2>Deployment Tiers</h2>
-            <p>Transparent pricing models for structural design and development services.</p>
-        </div>
-        <div class="pricing-grid">
-            <div class="price-card gs-reveal">
-                <h3>Identity Starter</h3>
-                <div class="price">$499</div>
-                <span class="billing">One-time payment</span>
-                <ul>
-                    <li>Primary & Secondary Logo</li>
-                    <li>Basic Color Palette</li>
-                    <li>Typography Selection</li>
-                    <li>Business Card Design</li>
-                    <li>2 Revision Rounds</li>
-                </ul>
-                <a href="#contact" class="btn-price">Request Tier</a>
-            </div>
-            <div class="price-card featured gs-reveal">
-                <h3>Digital Platform</h3>
-                <div class="price">$1,499</div>
-                <span class="billing">One-time payment</span>
-                <ul>
-                    <li>Full Brand Identity System</li>
-                    <li>5-Page Custom Website</li>
-                    <li>Responsive UI/UX Design</li>
-                    <li>Basic SEO Setup</li>
-                    <li>Social Media Kit</li>
-                </ul>
-                <a href="#contact" class="btn-price">Request Tier</a>
-            </div>
-            <div class="price-card gs-reveal">
-                <h3>E-Commerce & Scale</h3>
-                <div class="price">Custom</div>
-                <span class="billing">Retainer or Fixed Scope</span>
-                <ul>
-                    <li>Full E-Commerce Architecture</li>
-                    <li>Payment Gateway Integration</li>
-                    <li>Advanced Animations & WebGL</li>
-                    <li>Ongoing Graphic Support</li>
-                    <li>Priority 24/7 SLA</li>
-                </ul>
-                <a href="#contact" class="btn-price">Contact Sales</a>
-            </div>
-        </div>
-    </section>
-
-    <section id="faq" class="section-padding border-bottom">
-        <div class="section-header gs-reveal">
-            <h2>Frequently Asked Questions</h2>
-            <p>Operational inquiries regarding our design and deployment protocols.</p>
-        </div>
-        <div class="faq-grid">
-            <div class="faq-item gs-reveal">
-                <h4>What is the standard turnaround time?</h4>
-                <p>Brand identities typically require 2-3 weeks of structured development. Full-scale web platforms take between 4-8 weeks depending on the complexity of the architecture.</p>
-            </div>
-            <div class="faq-item gs-reveal">
-                <h4>Do you provide ongoing website maintenance?</h4>
-                <p>Yes. Post-deployment, we offer technical retainers to handle server updates, security patches, and ongoing content integration.</p>
-            </div>
-            <div class="faq-item gs-reveal">
-                <h4>What platforms do you build websites on?</h4>
-                <p>We engineer custom solutions using raw HTML/CSS/JS (like this site), as well as robust CMS platforms like WordPress and Shopify for e-commerce.</p>
-            </div>
-            <div class="faq-item gs-reveal">
-                <h4>Who owns the final design assets?</h4>
-                <p>Upon final payment and deployment, all intellectual property rights and raw source files are fully transferred to the client.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="contact-section">
-        <div class="contact-header gs-reveal">
-            <h2>Initiate<br>Project.</h2>
-            <p style="margin-top: 1rem; max-width: 300px;">Ready to engineer your brand's digital presence? Connect with our headquarters to deploy your vision.</p>
-        </div>
-        <div class="contact-details">
-            <div class="detail-block gs-reveal">
-                <h4>Leadership / Owner</h4>
-                <p>Indrajeet Pista</p>
-                <p style="font-weight: 400; font-size: 0.85rem; color: var(--text-muted);">Lead Architect</p>
-            </div>
-            <div class="detail-block gs-reveal">
-                <h4>Base of Operations</h4>
-                <p>Dantewada,<br>Chhattisgarh, India</p>
-            </div>
-            <div class="detail-block gs-reveal">
-                <h4>Comms Network</h4>
-                <p>E: <a href="mailto:trade@digital.com">trade@digital.com</a></p>
-                <p>T: <a href="tel:+919399097196">+91 9399097196</a></p>
-            </div>
-            <div class="detail-block gs-reveal">
-                <h4>Digital Nodes</h4>
-                <div class="social-links">
-                    <a href="https://instagram.com/your_id_here" target="_blank">Instagram <span>&#8599;</span></a>
-                    <a href="https://behance.net/your_id_here" target="_blank">Behance <span>&#8599;</span></a>
-                    <a href="https://pinterest.com/your_id_here" target="_blank">Pinterest <span>&#8599;</span></a>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <footer>
         <div class="footer-grid">
             <div class="footer-col">
-                <div class="logo" style="padding: 0; border: none; margin-bottom: 1rem;">DIGITAL.TRADE</div>
+                <div class="logo interactable" style="padding: 0; border: none; margin-bottom: 1rem;">DIGITAL.TRADE</div>
                 <p style="color: #888; font-size: 0.8rem; max-width: 250px;">A minimalist design and development agency engineering future-proof brand architectures.</p>
-                
                 <div class="terminal-readout">
-                    > SYSTEM_CHECK: CREATIVE_OK<br>
-                    > LATENCY: 0.0ms<br>
-                    > STUDIO_STATUS: ACTIVE<br>
-                    <span class="cursor" style="animation: blink 1s infinite;">_</span>
+                    > SYSTEM_CHECK: CREATIVE_OK<br>> LATENCY: 0.0ms<br>> STUDIO_STATUS: ACTIVE<br><span style="animation: blink 1s infinite;">_</span>
                 </div>
             </div>
-            
             <div class="footer-col">
                 <div class="footer-title">Disciplines</div>
                 <ul class="footer-links">
-                    <li><a href="#services">UI/UX Design</a></li>
-                    <li><a href="#services">Brand Identity</a></li>
-                    <li><a href="#services">Web Development</a></li>
-                    <li><a href="#services">Print Graphics</a></li>
+                    <li><a href="#services" class="interactable">UI/UX Design</a></li>
+                    <li><a href="#services" class="interactable">Brand Identity</a></li>
+                    <li><a href="#services" class="interactable">Web Development</a></li>
                 </ul>
             </div>
-
             <div class="footer-col">
                 <div class="footer-title">Resources</div>
                 <ul class="footer-links">
-                    <li><a href="#process">Deployment Process</a></li>
-                    <li><a href="#portfolio">Design Portfolio</a></li>
-                    <li><a href="#price">Pricing Tiers</a></li>
-                    <li><a href="#faq">Knowledge Base</a></li>
+                    <li><a href="#work" class="interactable">Design Portfolio</a></li>
+                    <li><a href="#pricing" class="interactable">Pricing Tiers</a></li>
+                    <li><a href="#pricing" class="interactable">Knowledge Base</a></li>
                 </ul>
             </div>
-
             <div class="footer-col">
                 <div class="footer-title">Global Network</div>
-                <p style="color: #888; margin-bottom: 1rem;">Designing from Dantewada, shipping globally.</p>
-                <div style="width: 100%; height: 100px; border: 1px dotted #333; display: flex; align-items: center; justify-content: center; color: #555;">
-                    [ NODE_MAP: ONLINE ]
+                <p style="color: #888; margin-bottom: 1rem;">Designing from Shegaon, shipping globally.</p>
+                <div style="width: 100%; height: 120px; border: 1px solid #333; overflow: hidden; opacity: 0.8;">
+                    <iframe 
+                        src="https://maps.google.com/maps?q=Balod,+Chhattisgarh&t=&z=11&ie=UTF8&iwloc=&output=embed" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0; filter: grayscale(100%) invert(100%) contrast(1.2);" 
+                        allowfullscreen="" 
+                        loading="lazy"
+                        class="interactable">
+                    </iframe>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
             <div>&copy; 2026 DIGITAL TRADE. ALL RIGHTS RESERVED.</div>
-            <div>ARCHITECT: INDRAJEET PISTA | BUILD 9928</div>
+            <div>ARCHITECT: INDRAJEET PISTA | BUILD 9932</div>
         </div>
     </footer>
 
     <script>
-        // --- Mobile Menu Toggle Logic (Glitch Fixed) ---
+        // --- WhatsApp Integration Logic ---
+        function sendToWhatsApp(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('wa-name').value;
+            const email = document.getElementById('wa-email').value;
+            const message = document.getElementById('wa-message').value;
+            const whatsappNumber = "917646846030";
+
+            const whatsappText = `*NEW PROJECT TRANSMISSION*%0A%0A*Name:* ${name}%0A*Email:* ${email}%0A%0A*Project Parameters:*%0A${message}`;
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${whatsappText}`;
+
+            window.open(whatsappURL, '_blank');
+        }
+
+        // --- Custom Cursor Logic (Fixed for Visibility) ---
+        const cursor = document.getElementById('cursor');
+        const interactables = document.querySelectorAll('.interactable, a, button, input, textarea, .portfolio-item, .feature-card, .price-card');
+
+        // Check if device supports hover (disables custom cursor on mobile touch screens)
+        const isHoverableDevice = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+        if (isHoverableDevice) {
+            window.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+
+            interactables.forEach(item => {
+                item.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                item.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
+        }
+
+        // --- Single Page Application (SPA) Router Logic ---
+        const pages = document.querySelectorAll('.page');
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const mobileLinksList = document.querySelectorAll('.mobile-link');
         const hamburger = document.querySelector('.hamburger');
         const mobileMenu = document.querySelector('.mobile-menu');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
 
+        function handleRouting() {
+            let hash = window.location.hash || '#home';
+            
+            // Hide all pages, show target
+            pages.forEach(page => page.classList.remove('active'));
+            const targetPage = document.querySelector(hash);
+            if (targetPage) targetPage.classList.add('active');
+
+            // Update Nav Active States
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if(link.getAttribute('href') === hash) link.classList.add('active');
+            });
+
+            // Re-trigger GSAP animations for the new page
+            ScrollTrigger.refresh();
+            window.scrollTo(0,0);
+        }
+
+        window.addEventListener('hashchange', handleRouting);
+        // Initial load route check
+        if(window.location.hash) handleRouting();
+
+        // --- Mobile Menu Toggle Logic ---
         hamburger.addEventListener('click', () => {
             hamburger.classList.toggle('active');
             mobileMenu.classList.toggle('active');
-            // This prevents the background from scrolling while the menu is open
-            if(mobileMenu.classList.contains('active')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
+            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
         });
 
-        mobileLinks.forEach(link => {
+        mobileLinksList.forEach(link => {
             link.addEventListener('click', () => {
                 hamburger.classList.remove('active');
                 mobileMenu.classList.remove('active');
-                // Re-enables scrolling once a link is clicked
                 document.body.style.overflow = '';
             });
         });
 
         // --- GSAP Scroll Animations ---
         gsap.registerPlugin(ScrollTrigger);
-
-        gsap.from(".hero-text", { x: -50, opacity: 0, duration: 1, ease: "power3.out", delay: 0.2 });
-        gsap.from(".hero-img-container", { x: 50, opacity: 0, duration: 1, ease: "power3.out", delay: 0.4 });
 
         const revealElements = document.querySelectorAll(".gs-reveal");
         revealElements.forEach((elem) => {
